@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>PodChat Call (Sandbox)</title>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+    <style>
+        html, body {
+            font-family: monospace, tahoma;
+            font-size: 14px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 20px;
+        }
+
+        #container {
+            width: 772px;
+        }
+
+        #header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #statusContainer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            grid-column-gap: 5px;
+            grid-row-gap: 0;
+            justify-items: stretch;
+            align-items: stretch;
+        }
+
+        #statusContainer p {
+            margin: 5px 0;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        #threadForm {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #callForm > fieldset {
+            padding: 20px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            color: #fff;
+            background-color: #222;
+            border: none !important;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn.outline {
+            background-color: transparent !important;
+            color: #212121;
+            border: solid 1px #212121 !important;
+        }
+
+        .btn.red {
+            background-color: #d01340;
+        }
+
+        .btn.green {
+            background-color: #65c100;
+        }
+
+        input,
+        .form-input {
+            padding: 5px 15px;
+            border: solid 1px #ddd !important;
+            display: inline-block;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        table {
+            margin: auto;
+            width: 100%;
+        }
+
+        table td {
+            border: solid 1px #ddd;
+            padding: 6px 15px;
+        }
+
+        table tr:nth-child(2n) {
+            background-color: #eee;
+            font-family: monospace;
+        }
+
+        .video-wrapper {
+            width: auto;
+            text-align: center;
+            display: flex;
+        }
+
+        .video-wrapper video {
+            max-width: 100%;
+            background-color: bisque;
+            border: solid 5px bisque;
+        }
+
+        .video-wrapper audio {
+            max-width: 100%;
+            display: block;
+            justify-self: flex-end;
+            outline: none !important;
+            visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        #call-info {
+            margin-left: 20px;
+        }
+
+        #caller-modal,
+        #callee-modal {
+            position: absolute;
+            min-width: 400px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #callee-image,
+        #caller-image {
+            background-color: #888888;
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 50%;
+            margin: 10px;
+        }
+
+        .blur {
+            filter: blur(5px);
+        }
+
+        .participant.wrapper {
+            position: relative;
+        }
+
+        .poor-connection{
+            position: fixed;
+            top: 0;
+            left: 0px;
+            padding: 5px;
+            color: #ffffff;
+            background-color: rgba(215, 65, 65, 0.7);
+            right: 0;
+            margin-top: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+<div id="container">
+    <div id="header">
+        <h1>POD CHAT CALL (Sandbox)</h1>
+
+        <a class="btn outline" href="#" id="sign-out">
+            Sign out
+        </a>
+    </div>
+
+    <form id="chatStatus">
+        <fieldset>
+            <legend>Chat Status</legend>
+
+            <div id="statusContainer">
+                <p>Socket Status: <strong id="chat-connection-status">-</strong></p>
+                <p>
+                    <button class="btn outline" id="reconnect-socket">
+                        Refresh Socket
+                    </button>
+                </p>
+                <p>Current User: <strong id="chat-user">...</strong></p>
+                <p>Internet Status: <strong id="internet-status">-</strong></p>
+            </div>
+        </fieldset>
+    </form>
+
+    <br>
+
+    <form id="callForm">
+        <fieldset>
+            <legend>Call</legend>
+
+
+            <div id="threadForm">
+                <div>
+                    <label for="call-p2p-participant">Select a Person to call:</label>
+
+                    <select name="call-p2p-participant" id="call-p2p-participant" class="form-input">
+                        <option value="">Select One ...</option>
+                        <option value="h.amouzegar">Hamidreza Amouzegar</option>
+                        <option value="ma.amjadi">Masoud Amjadi</option>
+                        <option value="masoud.alavi">Masoud Alavi</option>
+                        <option value="fkheirkhah">Farhad Kheirkhah</option>
+                        <option value="saeed.aminii">Saeed Aminii</option>
+                        <option value="ndfathi">Neda Fathi</option>
+                        <option value="hossein.samadzadegan">Hossein Samadzadegan</option>
+                        <option value="poddraw">Pod Draw</option>
+                        <option value="a.rokni">Arvin Rokni</option>
+                        <option value="arsham">Arsham</option>
+                        <option value="somayebehdani">Somayeh Behdani</option>
+                        <option value="mahsahasanizadeh">Mahsa Hasanzadeh</option>
+                        <option value="farzane.lotfi">Farzane Lotfi</option>
+                        <option value="neda.khosravi">Neda Khosravi</option>
+                        <option value="reza.sadeghi">Reza Sadeghi</option>
+                        <option value="elias.khosravi">Elias Khosravi</option>
+                        <option value="e.habibi">E. Habibi</option>
+                        <option value="a.moghani">A. Moghani</option>
+                        <option value="hossein.zamani">Hossein Zamani</option>
+                        <option value="maryam.saberi">Maryam Saberi</option>
+                        <option value="m.abrishami">M. Abrishami</option>
+                        <option value="e.salehi">E. Salehi</option>
+                        <option value="SA.sajjadi">Ahmad Sajadi</option>
+                        <option value="a.shafiei">Arash Shafiei</option>
+                        <option value="f.naysee">Farhan Naysee</option>
+                    </select>
+
+                    <input
+                        placeholder="Select a user o enter a username"
+                        type="text"
+                        name="call-p2p-participant-text"
+                        id="call-p2p-participant-text"
+                        class="form-input"
+                    style="min-width: 200px">
+                </div>
+
+
+                <div>
+                    <label for="call-p2p-thread">Or enter a P2P Thread Id:</label>
+
+                    <input type="text" name="call-p2p-thread" id="call-p2p-thread" value="" class="custom-thread-id">
+                </div>
+
+                <a class="btn green" href="#" id="start-call">
+                    Start Call
+                </a>
+            </div>
+
+            <br>
+            <br>
+
+            <div class="video-wrapper" id="call-div">
+                <p class="poor-connection"></p>
+            </div>
+
+            <br style="clear: fix">
+
+            <div>
+                <a class="btn red" href="#" id="end-call">Stop Call</a>
+                <a class="btn" href="#" id="restart-call">Send Key Frame</a>
+                <a class="btn" href="#" id="start-recording-call">Start Recording</a>
+                <a class="btn" href="#" id="stop-recording-call">Stop Recording</a>
+                <button id="toggle-camera" class="btn outline " style="margin-top: 5px;">Toggle Camera</button>
+                <button id="toggle-mice" class="btn outline " style="margin-top: 5px;">Toggle Mice</button>
+                <button id="toggle-screen-share" class="btn outline " style="margin-top: 5px;">Toggle ScreenShare</button>
+            </div>
+            <br>
+            <div>
+            </div>
+
+            <br>
+            <table>
+                <tr>
+                    <td>Call Id</td>
+                    <td>Broker</td>
+                    <td>Send Topic</td>
+                    <td>Receive Topic</td>
+                    <td>Call Duration</td>
+                </tr>
+                <tr>
+                    <td id="call-receive-id"></td>
+                    <td id="call-receive-broker"></td>
+                    <td id="call-receive-send"></td>
+                    <td id="call-receive-receive"></td>
+                    <td><strong id="call-duration">0</strong></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+    <div class="stats-box"></div>
+    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1400.08.1 (podchat-browser@11.2.4)</p>
+</div>
+
+<div id="callee-modal">
+    <img src="" alt="" id="callee-image">
+    <p>You are calling <strong id="callee-name"></strong> ...</p>
+    <br>
+    <p>State: <strong id="calling-state"></strong> ...</p>
+    <br>
+
+    <div>
+        <button class="btn" id="endCall">Cancel Call</button>
+    </div>
+</div>
+
+<div id="caller-modal">
+    <img src="" alt="" id="caller-image">
+    <p><strong id="caller-name"></strong> is calling ...</p>
+    <br>
+    <div>
+        <button class="btn green" id="acceptCall">Accept Call</button>
+        <button class="btn red" id="rejectCall">Reject Call</button>
+    </div>
+</div>
+
+<script src="bundle.js"></script>
+</body>
+</html>
