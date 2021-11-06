@@ -227,6 +227,7 @@ chatAgent.on('callEvents', function (event) {
             callState.callStarted = false;
             callState.callStartedElsewhere = false;
             callState.callRequested = false;
+            participantIsOnline = false;
             callId = null;
             document.getElementById('call-receive-id').innerText = '';
             document.getElementById('call-div').innerHTML = '';
@@ -292,6 +293,7 @@ document.getElementById('endCall').addEventListener('click', () => {
     stopCallTones();
     callState.callRequested = false;
     chatAgent.rejectCall({callId: callId});
+    participantIsOnline = false;
 });
 
 document.getElementById('reconnect-socket').addEventListener('click', (e) => {
@@ -326,29 +328,48 @@ document.getElementById('start-call').addEventListener('click', () => {
         waitForPartnerToAcceptCall()
     }
 });
-window.waitForPartnerToAcceptCallInterval = null;
-var waitForPartnerToAcceptCallRetryCount = 0;
+let waitForPartnerToAcceptCallInterval = null,
+    waitForPartnerToAcceptCallRetryCount = 0;
 function waitForPartnerToAcceptCall() {
-    window.waitForPartnerToAcceptCallInterval = setInterval(()=> {
+    if (waitForPartnerToAcceptCallInterval) {
+        updateCallRetryCount(0);
+        clearInterval(waitForPartnerToAcceptCallInterval);
+    }
+    waitForPartnerToAcceptCallInterval = setInterval(()=> {
         if(!callId || !callState.callRequested) {
-            waitForPartnerToAcceptCallRetryCount = 0;
-            clearInterval(window.waitForPartnerToAcceptCallInterval);
+            updateCallRetryCount(0);
+            clearInterval(waitForPartnerToAcceptCallInterval);
             return
         }
-        if(!participantIsOnline && waitForPartnerToAcceptCallRetryCount < 8) {
-            console.log("[call-full] Partner is not online..., we do nothing here, Retry counts: ", waitForPartnerToAcceptCallRetryCount);
-            waitForPartnerToAcceptCallRetryCount++;
-        } else {
-            if(!participantIsOnline && waitForPartnerToAcceptCallRetryCount > 8) {
-                console.log("[call-full] Partner is not online..., we retried 8 times...  ");
+        console.log("[call-full][waitForPartnerToAcceptCall]", participantIsOnline, waitForPartnerToAcceptCallRetryCount )
+        if(waitForPartnerToAcceptCallRetryCount < 8) {
+            if(!participantIsOnline ) {
+                console.log("[call-full][waitForPartnerToAcceptCall] Partner is not online..., we do nothing here, Retry counts: ", waitForPartnerToAcceptCallRetryCount);
+                updateCallRetryCount(waitForPartnerToAcceptCallRetryCount + 1);
+                document.getElementById("endCall").click();
+                document.getElementById("start-call").click();
             } else {
-                console.log("[call-full] Partner is now online..., we don't need to retry...");
+                updateCallRetryCount(0);
+                clearInterval(waitForPartnerToAcceptCallInterval);
             }
-
-            waitForPartnerToAcceptCallRetryCount = 0;
-            clearInterval(window.waitForPartnerToAcceptCallInterval);
+        } else {
+            if(!participantIsOnline) {
+                console.log("[call-full][waitForPartnerToAcceptCall] Partner is not online..., we retried 8 times...  ");
+            } else {
+                console.log("[call-full][waitForPartnerToAcceptCall] Partner is now online..., we don't need to retry...");
+            }
+            updateCallRetryCount(0);
+            clearInterval(waitForPartnerToAcceptCallInterval);
         }
-    }, 60000);
+    }, 8000);
+}
+
+function updateCallRetryCount(count){
+    waitForPartnerToAcceptCallRetryCount = count;
+    if(!count)
+        document.getElementById("retry-count").innerText = '';
+    else
+        document.getElementById("retry-count").innerText = ' . retries: ' + count;
 }
 
 /*
