@@ -13,7 +13,7 @@ callerTone.loop = true;
 calleeTone.loop = true;
 
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -319,13 +319,15 @@ document.getElementById('start-call').addEventListener('click', () => {
             chatAgent.startCall({threadId: newThreadId, type: 'video'});
             callRequestStateModifier('Calling')
             callState.callRequested = true;
-            waitForPartnerToAcceptCall()
+            if(!waitForPartnerToAcceptCallInterval)
+                waitForPartnerToAcceptCall()
         });
     } else if (threadId) {
         chatAgent.startCall({threadId: threadId, type: 'video'});
         callRequestStateModifier('Calling')
         callState.callRequested = true;
-        waitForPartnerToAcceptCall()
+        if(!waitForPartnerToAcceptCallInterval)
+            waitForPartnerToAcceptCall()
     }
 });
 let waitForPartnerToAcceptCallInterval = null,
@@ -342,12 +344,14 @@ function waitForPartnerToAcceptCall() {
             return
         }
         console.log("[call-full][waitForPartnerToAcceptCall]", participantIsOnline, waitForPartnerToAcceptCallRetryCount )
-        if(waitForPartnerToAcceptCallRetryCount < 8) {
+        if(waitForPartnerToAcceptCallRetryCount < 6) {
             if(!participantIsOnline ) {
-                console.log("[call-full][waitForPartnerToAcceptCall] Partner is not online..., we do nothing here, Retry counts: ", waitForPartnerToAcceptCallRetryCount);
                 updateCallRetryCount(waitForPartnerToAcceptCallRetryCount + 1);
+                console.log("[call-full][waitForPartnerToAcceptCall] Partner is not online..., Retrying..., Retry counts: ", waitForPartnerToAcceptCallRetryCount);
                 document.getElementById("endCall").click();
-                document.getElementById("start-call").click();
+                setTimeout(function () {
+                    document.getElementById("start-call").click();
+                });
             } else {
                 updateCallRetryCount(0);
                 clearInterval(waitForPartnerToAcceptCallInterval);
@@ -361,15 +365,16 @@ function waitForPartnerToAcceptCall() {
             updateCallRetryCount(0);
             clearInterval(waitForPartnerToAcceptCallInterval);
         }
-    }, 8000);
+    }, 10000);
 }
 
 function updateCallRetryCount(count){
     waitForPartnerToAcceptCallRetryCount = count;
     if(!count)
-        document.getElementById("retry-count").innerText = '';
-    else
-        document.getElementById("retry-count").innerText = ' . retries: ' + count;
+        document.getElementById("retries-count").innerHTML = '';
+    else {
+        document.getElementById("retries-count").innerHTML = ',retries: ' + count;
+    }
 }
 
 /*
@@ -477,7 +482,6 @@ document.getElementById('toggle-mice').addEventListener('click', (event) => {
     }
 });
 
-
 var screenSharingState = false;
 document.getElementById('toggle-screen-share').addEventListener('click', (event) => {
     event.preventDefault();
@@ -504,6 +508,5 @@ function stopCallTones() {
 }
 
 function callRequestStateModifier(state) {
-    console.log(state);
     document.getElementById("calling-state").innerHTML = state;
 }
