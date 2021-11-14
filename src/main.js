@@ -13,7 +13,7 @@ callerTone.loop = true;
 calleeTone.loop = true;
 
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -313,11 +313,17 @@ document.getElementById('start-call').addEventListener('click', () => {
                 {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"}
             ]
         }, (result) => {
+            console.log(result)
             let newThreadId = result.result.thread.id;
-            chatAgent.startCall({threadId: newThreadId, type: 'video'});
-            callRequestStateModifier('Calling')
-            callState.callRequested = true;
-            waitForPartnerToAcceptCall()
+            chatAgent.getThreadParticipants({
+                threadId: newThreadId
+            }, function (res) {
+                console.log("[call-full][getThreadParticipants]", newThreadId, res);
+                chatAgent.startCall({threadId: newThreadId, type: 'video'});
+                callRequestStateModifier('Calling')
+                callState.callRequested = true;
+                waitForPartnerToAcceptCall()
+            })
         });
     } else if (threadId) {
         chatAgent.startCall({threadId: threadId, type: 'video'});
@@ -486,3 +492,34 @@ function callRequestStateModifier(state) {
     console.log(state);
     document.getElementById("calling-state").innerHTML = state;
 }
+
+
+document.getElementById("customRecordingStart").addEventListener("click", function (event) {
+    event.preventDefault();
+    var thread = document.getElementById("customRecordingThreadId").value;
+    if(!thread) {
+        console.log("[call-full][customRecordingStart] Error thread id is required")
+        return;
+    }
+    var tags = document.getElementById("customRecordingTags").value;
+    if(tags && tags.length && tags.indexOf(",") !== false) {
+        tags = tags.split(",")
+    }
+//customRecordingcallId
+    var othersCallId = document.getElementById("customRecordingCallId").value;
+
+    chatAgent.startRecordingCall({
+        destinated: true,
+        callId: othersCallId,
+        threadId: thread,
+        tags: tags
+    }, function (result) {
+        console.log(result);
+    })
+});
+document.getElementById("customRecordingStop").addEventListener("click", function (event) {
+    event.preventDefault();
+    chatAgent.startRecordingCall({
+        callId: callId,
+    })
+});
