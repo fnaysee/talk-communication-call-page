@@ -267,7 +267,8 @@ document.getElementById('acceptCall').addEventListener('click', () => {
     chatAgent.acceptCall({
         callId: callId,
         video: true,
-        mute: false
+        mute: false,
+        cameraPaused: false
     }, function (result) {
         document.getElementById('caller-modal').style.display = 'none';
         document.getElementById('container').classList.remove('blur');
@@ -474,8 +475,7 @@ document.getElementById('toggle-screen-share').addEventListener('click', (event)
     } else {
         screenSharingState = false;
         chatAgent.endScreenShare({
-            callId: callId,
-            startCamera: true
+            callId: callId
         });
     }
 });
@@ -522,4 +522,19 @@ document.getElementById("customRecordingStop").addEventListener("click", functio
     chatAgent.startRecordingCall({
         callId: callId,
     })
+});
+var videoStreamState = false;
+document.getElementById("toggle-video-stream").addEventListener("click", function (event) {
+    event.preventDefault();
+    if(videoStreamState){
+        chatAgent.turnOffVideoCall({
+            callId: callId,
+        });
+        videoStreamState = false
+    } else {
+        videoStreamState = true;
+        chatAgent.turnOnVideoCall({
+            callId: callId,
+        });
+    }
 });
