@@ -538,3 +538,18 @@ document.getElementById("toggle-video-stream").addEventListener("click", functio
         });
     }
 });
+var micStreamState = false;
+document.getElementById("toggle-microphone-stream").addEventListener("click", function (event) {
+    event.preventDefault();
+    if(videoStreamState){
+        chatAgent.turnOffVideoCall({
+            callId: callId,
+        });
+        videoStreamState = false
+    } else {
+        videoStreamState = true;
+        chatAgent.turnOnVideoCall({
+            callId: callId,
+        });
+    }
+});
