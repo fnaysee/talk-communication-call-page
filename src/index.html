@@ -266,13 +266,6 @@
                     <input type="text" name="call-p2p-thread" id="call-p2p-thread" value="" class="custom-thread-id">
                 </div>
 
-                <a class="btn green" href="#" id="start-video-call">
-                    Start Call
-                </a>
-                <!--<a class="btn green" href="#" id="start-audio-call">
-                    Start Audio Call
-                </a>-->
-
             </div>
 
             <br>
@@ -285,6 +278,13 @@
             <br style="clear: fix">
 
             <div>
+                <a class="btn green" href="#" id="start-video-call">
+                    Start Video Call
+                </a>
+                <a class="btn green" href="#" id="start-audio-call">
+                    Start Audio Call
+                </a>
+
                 <a class="btn red" href="#" id="end-call">Stop Call</a>
                 <a class="btn" href="#" id="restart-call">Send Key Frame</a>
                 <a class="btn" href="#" id="start-recording-call">Start Recording</a>
@@ -333,7 +333,7 @@
         </fieldset>
     </form>
     <div class="stats-box"></div>
-    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1400.09.1 (podchat-browser@11.3.1-snapshot.2)</p>
+    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1400.09.1 (podchat-browser@11.3.1)</p>
 </div>
 
 <div id="callee-modal">
@@ -353,8 +353,8 @@
     <p><strong id="caller-name"></strong> is calling ...</p>
     <br>
     <div>
-        <button class="btn green" id="acceptCallVideo">Accept Call</button>
-        <!--<button class="btn green" id="acceptCallAudio">Accept Video Call</button>-->
+        <button class="btn green" id="acceptCallVideo">Accept Video Call</button>
+        <button class="btn green" id="acceptCallAudio">Accept Audio Call</button>
         <button class="btn red" id="rejectCall">Reject Call</button>
     </div>
 </div>

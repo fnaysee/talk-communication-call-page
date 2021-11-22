@@ -276,6 +276,19 @@ document.getElementById('acceptCallVideo').addEventListener('click', () => {
 
     stopCallTones();
 });
+document.getElementById('acceptCallAudio').addEventListener('click', () => {
+    chatAgent.acceptCall({
+        callId: callId,
+        video: true,
+        mute: false,
+        cameraPaused: false
+    }, function (result) {
+        document.getElementById('caller-modal').style.display = 'none';
+        document.getElementById('container').classList.remove('blur');
+    });
+
+    stopCallTones();
+});
 
 document.getElementById('rejectCall').addEventListener('click', () => {
     chatAgent.rejectCall({callId: callId}, function (result) {
@@ -534,7 +547,7 @@ document.getElementById("customRecordingStop").addEventListener("click", functio
         callId: callId,
     })
 });
-var videoStreamState = false;
+var videoStreamState = true;
 document.getElementById("toggle-video-stream").addEventListener("click", function (event) {
     event.preventDefault();
     if(videoStreamState){
