@@ -358,9 +358,8 @@ function waitForPartnerToAcceptCall() {
     }, 60000);
 }
 
-/*
 document.getElementById('start-audio-call').addEventListener('click', () => {
-    let partnerUsername = document.getElementById('call-p2p-participant').value;
+    let partnerUsername = document.getElementById('call-p2p-participant-text').value;
     let threadId = document.getElementById('call-p2p-thread').value;
 
     if (partnerUsername) {
@@ -369,15 +368,25 @@ document.getElementById('start-audio-call').addEventListener('click', () => {
                 {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"}
             ]
         }, (result) => {
+            console.log(result)
             let newThreadId = result.result.thread.id;
-            chatAgent.startCall({threadId: newThreadId, type: 'audio'});
+            chatAgent.getThreadParticipants({
+                threadId: newThreadId
+            }, function (res) {
+                console.log("[call-full][getThreadParticipants]", newThreadId, res);
+                chatAgent.startCall({threadId: newThreadId, type: 'audio'});
+                callRequestStateModifier('Calling')
+                callState.callRequested = true;
+                waitForPartnerToAcceptCall()
+            })
         });
     } else if (threadId) {
-        chatAgent.startCall({threadId: threadId, type: 'video'});
+        chatAgent.startCall({threadId: threadId, type: 'voice'});
+        callRequestStateModifier('Calling')
+        callState.callRequested = true;
+        waitForPartnerToAcceptCall()
     }
 });
-*/
-
 
 
 document.getElementById('restart-call').addEventListener('click', () => {
@@ -538,18 +547,25 @@ document.getElementById("toggle-video-stream").addEventListener("click", functio
         });
     }
 });
-var micStreamState = false;
+var micIsMute = false;
 document.getElementById("toggle-microphone-stream").addEventListener("click", function (event) {
     event.preventDefault();
-    if(videoStreamState){
-        chatAgent.turnOffVideoCall({
+    if(micIsMute){
+        chatAgent.unMuteCallParticipants({
             callId: callId,
+            userIds: [
+                chatAgent.getCurrentUser().id
+            ]
         });
-        videoStreamState = false
+        micIsMute = false
     } else {
-        videoStreamState = true;
-        chatAgent.turnOnVideoCall({
+        micIsMute = true;
+        console.log("[call-full][chatAgent.getUserInfo] result", chatAgent.getCurrentUser())
+        chatAgent.muteCallParticipants({
             callId: callId,
+            userIds: [
+                chatAgent.getCurrentUser().id
+            ]
         });
     }
 });
