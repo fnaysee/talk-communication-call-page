@@ -279,7 +279,7 @@ document.getElementById('acceptCallVideo').addEventListener('click', () => {
 document.getElementById('acceptCallAudio').addEventListener('click', () => {
     chatAgent.acceptCall({
         callId: callId,
-        video: true,
+        video: false,
         mute: false,
         cameraPaused: false
     }, function (result) {
