@@ -346,7 +346,6 @@ document.getElementById('start-video-call').addEventListener('click', () => {
         waitForPartnerToAcceptCall()
     }
 });
-/*
 document.getElementById('start-audio-call').addEventListener('click', () => {
     let partnerUsername = document.getElementById('call-p2p-participant-text').value;
     let threadId = document.getElementById('call-p2p-thread').value;
@@ -376,7 +375,6 @@ document.getElementById('start-audio-call').addEventListener('click', () => {
         waitForPartnerToAcceptCall()
     }
 });
-*/
 
 window.waitForPartnerToAcceptCallInterval = null;
 var waitForPartnerToAcceptCallRetryCount = 0;
