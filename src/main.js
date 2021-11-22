@@ -263,7 +263,7 @@ document.getElementById('internet-status').innerHTML = (window.navigator.onLine)
 window.addEventListener('online', () => document.getElementById('internet-status').innerHTML = 'Online');
 window.addEventListener('offline', () => document.getElementById('internet-status').innerHTML = 'Offline');
 
-document.getElementById('acceptCall').addEventListener('click', () => {
+document.getElementById('acceptCallVideo').addEventListener('click', () => {
     chatAgent.acceptCall({
         callId: callId,
         video: true,
@@ -304,7 +304,7 @@ document.getElementById('call-p2p-participant').addEventListener('change', () =>
     document.getElementById('call-p2p-participant-text').value = document.getElementById('call-p2p-participant').value;
 });
 
-document.getElementById('start-call').addEventListener('click', () => {
+document.getElementById('start-video-call').addEventListener('click', () => {
     let partnerUsername = document.getElementById('call-p2p-participant-text').value;
     let threadId = document.getElementById('call-p2p-thread').value;
 
@@ -333,31 +333,7 @@ document.getElementById('start-call').addEventListener('click', () => {
         waitForPartnerToAcceptCall()
     }
 });
-window.waitForPartnerToAcceptCallInterval = null;
-var waitForPartnerToAcceptCallRetryCount = 0;
-function waitForPartnerToAcceptCall() {
-    window.waitForPartnerToAcceptCallInterval = setInterval(()=> {
-        if(!callId || !callState.callRequested) {
-            waitForPartnerToAcceptCallRetryCount = 0;
-            clearInterval(window.waitForPartnerToAcceptCallInterval);
-            return
-        }
-        if(!participantIsOnline && waitForPartnerToAcceptCallRetryCount < 8) {
-            console.log("[call-full] Partner is not online..., we do nothing here, Retry counts: ", waitForPartnerToAcceptCallRetryCount);
-            waitForPartnerToAcceptCallRetryCount++;
-        } else {
-            if(!participantIsOnline && waitForPartnerToAcceptCallRetryCount > 8) {
-                console.log("[call-full] Partner is not online..., we retried 8 times...  ");
-            } else {
-                console.log("[call-full] Partner is now online..., we don't need to retry...");
-            }
-
-            waitForPartnerToAcceptCallRetryCount = 0;
-            clearInterval(window.waitForPartnerToAcceptCallInterval);
-        }
-    }, 60000);
-}
-
+/*
 document.getElementById('start-audio-call').addEventListener('click', () => {
     let partnerUsername = document.getElementById('call-p2p-participant-text').value;
     let threadId = document.getElementById('call-p2p-thread').value;
@@ -387,6 +363,32 @@ document.getElementById('start-audio-call').addEventListener('click', () => {
         waitForPartnerToAcceptCall()
     }
 });
+*/
+
+window.waitForPartnerToAcceptCallInterval = null;
+var waitForPartnerToAcceptCallRetryCount = 0;
+function waitForPartnerToAcceptCall() {
+    window.waitForPartnerToAcceptCallInterval = setInterval(()=> {
+        if(!callId || !callState.callRequested) {
+            waitForPartnerToAcceptCallRetryCount = 0;
+            clearInterval(window.waitForPartnerToAcceptCallInterval);
+            return
+        }
+        if(!participantIsOnline && waitForPartnerToAcceptCallRetryCount < 8) {
+            console.log("[call-full] Partner is not online..., we do nothing here, Retry counts: ", waitForPartnerToAcceptCallRetryCount);
+            waitForPartnerToAcceptCallRetryCount++;
+        } else {
+            if(!participantIsOnline && waitForPartnerToAcceptCallRetryCount > 8) {
+                console.log("[call-full] Partner is not online..., we retried 8 times...  ");
+            } else {
+                console.log("[call-full] Partner is now online..., we don't need to retry...");
+            }
+
+            waitForPartnerToAcceptCallRetryCount = 0;
+            clearInterval(window.waitForPartnerToAcceptCallInterval);
+        }
+    }, 60000);
+}
 
 
 document.getElementById('restart-call').addEventListener('click', () => {
