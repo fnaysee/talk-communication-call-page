@@ -362,7 +362,7 @@ document.getElementById('start-audio-call').addEventListener('click', () => {
                 threadId: newThreadId
             }, function (res) {
                 console.log("[call-full][getThreadParticipants]", newThreadId, res);
-                chatAgent.startCall({threadId: newThreadId, type: 'audio'});
+                chatAgent.startCall({threadId: newThreadId, type: 'voice'});
                 callRequestStateModifier('Calling')
                 callState.callRequested = true;
                 waitForPartnerToAcceptCall()
