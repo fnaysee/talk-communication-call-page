@@ -13,7 +13,7 @@ callerTone.loop = true;
 calleeTone.loop = true;
 
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -403,7 +403,7 @@ function waitForPartnerToAcceptCall() {
 
 
 document.getElementById('restart-call').addEventListener('click', () => {
-    chatAgent.restartMedia();
+    chatAgent.restartMedia('screenShare');
 });
 
 document.getElementById('end-call').addEventListener('click', () => {
@@ -582,3 +582,16 @@ document.getElementById("toggle-microphone-stream").addEventListener("click", fu
         });
     }
 });
+
+document.getElementById("add-participant-to-call").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    var newUser = document.getElementById("newParticipantUserName").value;
+
+    chatAgent.addCallParticipants({
+        callId,
+        //coreUserids: [1111, 2222],
+        //contactIds: [1111, 2222],
+        usernames: [newUser] //['f.naysee']
+    })
+})
