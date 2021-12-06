@@ -165,9 +165,9 @@ chatAgent.on('callEvents', function (event) {
             callState.callStartedElsewhere = true;
             break;
         case 'RECEIVE_CALL': //code 73, 91
-            /*if(callState.callStarted || callState.callStartedElsewhere) {
+            if(callState.callStarted || callState.callStartedElsewhere) {
                 return;
-            }*/
+            }
             callId = event.result.callId;
             document.getElementById('call-receive-id').innerText = event.result.callId;
             document.getElementById('call-div').innerHTML = '';
