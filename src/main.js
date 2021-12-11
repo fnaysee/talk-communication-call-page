@@ -12,7 +12,6 @@ var callInterval, callStartTime, callId, reconnectInterval, reconnectTime,
 callerTone.loop = true;
 calleeTone.loop = true;
 
-
 const env = 'local';
 
 let chatAgent = new Podchat({
@@ -594,4 +593,45 @@ document.getElementById("add-participant-to-call").addEventListener("click", fun
         //contactIds: [1111, 2222],
         usernames: [newUser] //['f.naysee']
     })
+})
+
+document.getElementById("startGroupCall").addEventListener("click", function (event) {
+   event.preventDefault();
+    var threadId = document.getElementById("groupCallThreadId").value
+        , video =  document.getElementById("groupCallVideoCheckBox").checked
+        //, user1 =  document.getElementById("groupCallUserName1").value
+        //, user2 =  document.getElementById("groupCallUserName2").value
+        //, user3 =  document.getElementById("groupCallUserName3").value
+
+    var params = {}, userNames = []
+    if(video)
+        params.type = 'video';
+    else
+        params.type = 'voice'
+
+    if(threadId && threadId.length) //{
+        params.threadId = threadId
+    /*} else {
+        if(user1 && user1.length)  {
+            userNames.push({"idmuteCallParticipants": user1, "idType": "TO_BE_USER_CONTACT_ID"})
+        }
+        if(user2 && user2.length)  {
+            userNames.push({"id": user2, "idType": "TO_BE_USER_CONTACT_ID"})
+        }
+        if(user3 && user3.length)  {
+            userNames.push({"id": user3, "idType": "TO_BE_USER_CONTACT_ID"})
+        }
+    }*/
+
+    if(!params.threadId ) {
+        console.log("[call-full] Can not start group call without threadID");
+        return
+    }
+
+    //if(!params.threadId) {
+
+        //params.invitees = userNames;
+    //} else {
+        chatAgent.startGroupCall(params);
+    //}
 })

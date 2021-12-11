@@ -303,13 +303,30 @@
             </div>
 
             <br style="clear: fix">
-            <hr>
+
             <fieldset>
+                <legend>Add Call Participant</legend>
                 <input type="text" id="newParticipantUserName" placeholder="Participant Username">
                 <button id="add-participant-to-call" class="btn green"  style="margin-top: 5px;">Add To Call</button>
             </fieldset>
             <br>
+            <hr>
+            <fieldset>
+                <legend>Group Call</legend>
+                Enter Thread ID:
+                <input type="text" id="groupCallThreadId" placeholder="ThreadId">
 
+                <!--Or Enter At least 2 UserNames:
+                <br>
+                <input type="text" id="groupCallUserName1" placeholder="Contact ID">
+                <input type="text" id="groupCallUserName2" placeholder="Contact ID">
+                <input type="text" id="groupCallUserName3" placeholder="Contact ID">
+                <br>-->
+                <input type="checkbox" id="groupCallVideoCheckBox"> Video Call
+                <button id="startGroupCall" class="btn green"  style="margin-top: 5px;">Start Group Call</button>
+            </fieldset>
+            <hr>
+            <br>
             <fieldset>
                 <legend>Custom Recording</legend>
 
