@@ -12,7 +12,7 @@ var callInterval, callStartTime, callId, reconnectInterval, reconnectTime,
 callerTone.loop = true;
 calleeTone.loop = true;
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -139,6 +139,7 @@ chatAgent.on("chatState", function (chatState) {
     }
 })*/
 
+var callDivs;
 /**
  * Listen to Call Events
  */
@@ -147,17 +148,28 @@ chatAgent.on('callEvents', function (event) {
     console.log(event);
 
     switch (type) {
+        case 'CALL_DIVS':
+            callDivs = event.result.uiElements
+            break;
         case 'POOR_VIDEO_CONNECTION':
             const p = document.createElement('p');
             p.innerText = 'Connection is poor...';
             p.setAttribute("id",  'poorconnection-' + event.metadata.elementId);
             p.classList.add("poor-connection")
             if(!document.querySelector('#poorconnection-' + event.metadata.elementId)) {
-                document.getElementById("call-div").appendChild(p)
+                //document.getElementById("call-div").appendChild(p);
+                document.getElementById("call-div").appendChild(p);
+                if(callDivs[event.metadata.userId]) {
+                    callDivs[event.metadata.userId].container.appendChild(p)
+                }
                 //document.getElementById("callParticipantWrapper-" + event.metadata.userId).appendChild(p);
             }
+
             break;
         case 'POOR_VIDEO_CONNECTION_RESOLVED':
+            // if(callDivs[event.metadata.userId]) {
+            //     callDivs[event.metadata.userId].container.appendChild(p)
+            // }
             document.getElementById('poorconnection-' + event.metadata.elementId).remove();
             break;
         case 'CALL_STARTED_ELSEWHERE':
@@ -643,9 +655,9 @@ document.getElementById("terminateGroupCall").addEventListener("click", function
    }
 })
 
-document.getElementById("sendTestMetadata").addEventListener("click", function (event) {
+/*document.getElementById("sendTestMetadata").addEventListener("click", function (event) {
     event.preventDefault();
     chatAgent.sendCallMetaData({callId ,message: 'hi'}, function (result) {
         console.log(result)
     });
-})
+})*/
