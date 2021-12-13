@@ -635,3 +635,19 @@ document.getElementById("startGroupCall").addEventListener("click", function (ev
         chatAgent.startGroupCall(params);
     //}
 })
+
+document.getElementById("terminateGroupCall").addEventListener("click", function (event) {
+   event.preventDefault();
+   if(callId) {
+       chatAgent.terminateCall({callId});
+   }
+});
+
+/*
+document.getElementById("sendTestMetadata").addEventListener("click", function (event) {
+    event.preventDefault();
+    chatAgent.sendCallMetaData({callId ,message: 'hi'}, function (result) {
+        console.log(result)
+    });
+})
+*/
