@@ -12,7 +12,7 @@ var callInterval, callStartTime, callId, reconnectInterval, reconnectTime,
 callerTone.loop = true;
 calleeTone.loop = true;
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
