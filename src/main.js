@@ -12,7 +12,7 @@ var callInterval, callStartTime, callId, reconnectInterval, reconnectTime,
 callerTone.loop = true;
 calleeTone.loop = true;
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -634,4 +634,18 @@ document.getElementById("startGroupCall").addEventListener("click", function (ev
     //} else {
         chatAgent.startGroupCall(params);
     //}
+})
+
+document.getElementById("terminateGroupCall").addEventListener("click", function (event) {
+   event.preventDefault();
+   if(callId) {
+       chatAgent.terminateCall({callId});
+   }
+})
+
+document.getElementById("sendTestMetadata").addEventListener("click", function (event) {
+    event.preventDefault();
+    chatAgent.sendCallMetaData({callId ,message: 'hi'}, function (result) {
+        console.log(result)
+    });
 })
