@@ -5,7 +5,7 @@ import Podchat from 'podchat-browser';
 
 import Config from './scripts/Config';
 
-var callInterval, callStartTime, callId, reconnectInterval, reconnectTime,
+var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnectTime,
     callerTone = new Audio('./callerTone.ogg'),
     calleeTone = new Audio('./calleeTone.ogg');
 
@@ -176,13 +176,21 @@ chatAgent.on('callEvents', function (event) {
             callState.callStartedElsewhere = true;
             break;
         case 'RECEIVE_CALL': //code 73, 91
-            if(callState.callStarted || callState.callStartedElsewhere) {
+            /* if(callState.callStarted || callState.callStartedElsewhere) {
                 return;
+            } */
+            if(event.result.callId) {
+                if(!callId)
+                    callId = event.result.callId;
+                else
+                    newCallId = event.result.callId;
             }
-            callId = event.result.callId;
+
+            console.log({callId, newCallId})
+/*
             document.getElementById('call-receive-id').innerText = event.result.callId;
             document.getElementById('call-div').innerHTML = '';
-
+*/
             document.getElementById('container').classList.add('blur');
             document.getElementById('call-duration').innerText = 0;
 
@@ -235,21 +243,29 @@ chatAgent.on('callEvents', function (event) {
             break;
 
         case 'CALL_ENDED':
-            callState.callStarted = false;
-            callState.callStartedElsewhere = false;
-            callState.callRequested = false;
-            callId = null;
-            document.getElementById('call-receive-id').innerText = '';
-            document.getElementById('call-div').innerHTML = '';
+            if(event.callId !== callId) {
+                document.getElementById('caller-modal').style.display = 'none';
+                document.getElementById('callee-modal').style.display = 'none';
+                document.getElementById('container').classList.remove('blur');
 
-            callInterval && clearInterval(callInterval);
-            document.getElementById('call-div').innerHTML = '';
+                stopCallTones();
+            } else {
+                callState.callStarted = false;
+                callState.callStartedElsewhere = false;
+                callState.callRequested = false;
+                callId = null;
+                document.getElementById('call-receive-id').innerText = '';
+                document.getElementById('call-div').innerHTML = '';
 
-            document.getElementById('caller-modal').style.display = 'none';
-            document.getElementById('callee-modal').style.display = 'none';
-            document.getElementById('container').classList.remove('blur');
+                callInterval && clearInterval(callInterval);
+                document.getElementById('call-div').innerHTML = '';
 
-            stopCallTones();
+                document.getElementById('caller-modal').style.display = 'none';
+                document.getElementById('callee-modal').style.display = 'none';
+                document.getElementById('container').classList.remove('blur');
+
+                stopCallTones();
+            }
             break;
         case 'CALL_STARTED_ELSEWHERE':
             document.getElementById('caller-modal').style.display = 'none';
@@ -302,7 +318,9 @@ document.getElementById('acceptCallAudio').addEventListener('click', () => {
 });
 
 document.getElementById('rejectCall').addEventListener('click', () => {
-    chatAgent.rejectCall({callId: callId}, function (result) {
+    console.log({callId, newCallId});
+    var cId = callId ? callId : newCallId;
+    chatAgent.rejectCall({callId: cId}, function (result) {
         document.getElementById('caller-modal').style.display = 'none';
         document.getElementById('container').classList.remove('blur');
     });
@@ -313,10 +331,11 @@ document.getElementById('rejectCall').addEventListener('click', () => {
 document.getElementById('endCall').addEventListener('click', () => {
     document.getElementById('callee-modal').style.display = 'none';
     document.getElementById('container').classList.remove('blur');
-
+    console.log({callId, newCallId});
     stopCallTones();
     callState.callRequested = false;
-    chatAgent.rejectCall({callId: callId});
+    var cId = callId ? callId : newCallId;
+    chatAgent.rejectCall({callId: cId});
 });
 
 document.getElementById('reconnect-socket').addEventListener('click', (e) => {
