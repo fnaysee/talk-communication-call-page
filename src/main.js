@@ -716,8 +716,8 @@ document.getElementById("startCall").addEventListener("click", function () {
 
 
 document.getElementById('acceptCall').addEventListener('click', () => {
-    var video = document.getElementById("startCallVideoCheckMark").checked;
-    var mute = document.getElementById("startCallMuteCheckMark").checked;
+    var video = document.getElementById("acceptCallVideoCheckMark").checked;
+    var mute = document.getElementById("acceptCallMuteCheckMark").checked;
 
     chatAgent.acceptCall({
         callId: callId,
