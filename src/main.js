@@ -347,7 +347,7 @@ document.getElementById('call-p2p-participant').addEventListener('change', () =>
     document.getElementById('call-p2p-participant-text').value = document.getElementById('call-p2p-participant').value;
 });
 
-document.getElementById('start-video-call').addEventListener('click', () => {
+/*document.getElementById('start-video-call').addEventListener('click', () => {
     let partnerUsername = document.getElementById('call-p2p-participant-text').value;
     let threadId = document.getElementById('call-p2p-thread').value;
 
@@ -404,7 +404,7 @@ document.getElementById('start-audio-call').addEventListener('click', () => {
         callState.callRequested = true;
         waitForPartnerToAcceptCall()
     }
-});
+});*/
 
 window.waitForPartnerToAcceptCallInterval = null;
 var waitForPartnerToAcceptCallRetryCount = 0;
