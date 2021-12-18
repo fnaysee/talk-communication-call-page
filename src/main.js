@@ -290,7 +290,7 @@ document.getElementById('internet-status').innerHTML = (window.navigator.onLine)
 window.addEventListener('online', () => document.getElementById('internet-status').innerHTML = 'Online');
 window.addEventListener('offline', () => document.getElementById('internet-status').innerHTML = 'Offline');
 
-document.getElementById('acceptCallVideo').addEventListener('click', () => {
+/* document.getElementById('acceptCallVideo').addEventListener('click', () => {
     chatAgent.acceptCall({
         callId: callId,
         video: true,
@@ -302,8 +302,8 @@ document.getElementById('acceptCallVideo').addEventListener('click', () => {
     });
 
     stopCallTones();
-});
-document.getElementById('acceptCallAudio').addEventListener('click', () => {
+}); */
+/* document.getElementById('acceptCallAudio').addEventListener('click', () => {
     chatAgent.acceptCall({
         callId: callId,
         video: false,
@@ -315,11 +315,11 @@ document.getElementById('acceptCallAudio').addEventListener('click', () => {
     });
 
     stopCallTones();
-});
+}); */
 
 document.getElementById('rejectCall').addEventListener('click', () => {
     console.log({callId, newCallId});
-    var cId = callId ? callId : newCallId;
+    var cId = newCallId ? newCallId : callId;
     chatAgent.rejectCall({callId: cId}, function (result) {
         document.getElementById('caller-modal').style.display = 'none';
         document.getElementById('container').classList.remove('blur');
@@ -334,7 +334,7 @@ document.getElementById('endCall').addEventListener('click', () => {
     console.log({callId, newCallId});
     stopCallTones();
     callState.callRequested = false;
-    var cId = callId ? callId : newCallId;
+    var cId = newCallId ? newCallId : callId;
     chatAgent.rejectCall({callId: cId});
 });
 
@@ -680,3 +680,54 @@ document.getElementById("terminateGroupCall").addEventListener("click", function
         console.log(result)
     });
 })*/
+
+document.getElementById("startCall").addEventListener("click", function () {
+    var video = document.getElementById("startCallVideoCheckMark").checked;
+    var mute = document.getElementById("startCallMuteCheckMark").checked;
+
+    let partnerUsername = document.getElementById('call-p2p-participant-text').value;
+    let threadId = document.getElementById('call-p2p-thread').value;
+
+    if (partnerUsername) {
+        chatAgent.createThread({
+            "invitees": [
+                {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"}
+            ]
+        }, (result) => {
+            console.log(result)
+            let newThreadId = result.result.thread.id;
+            chatAgent.getThreadParticipants({
+                threadId: newThreadId
+            }, function (res) {
+                console.log("[call-full][getThreadParticipants]", newThreadId, res);
+                chatAgent.startCall({threadId: newThreadId, type: (video ? 'video' : 'voice'), mute: mute});
+                callRequestStateModifier('Calling')
+                callState.callRequested = true;
+                waitForPartnerToAcceptCall()
+            })
+        });
+    } else if (threadId) {
+        chatAgent.startCall({threadId: threadId, type: 'voice'});
+        callRequestStateModifier('Calling')
+        callState.callRequested = true;
+        waitForPartnerToAcceptCall()
+    }
+});
+
+
+document.getElementById('acceptCall').addEventListener('click', () => {
+    var video = document.getElementById("startCallVideoCheckMark").checked;
+    var mute = document.getElementById("startCallMuteCheckMark").checked;
+
+    chatAgent.acceptCall({
+        callId: callId,
+        video: video,
+        mute: mute,
+        cameraPaused: false
+    }, function (result) {
+        document.getElementById('caller-modal').style.display = 'none';
+        document.getElementById('container').classList.remove('blur');
+    });
+
+    stopCallTones();
+});

@@ -277,12 +277,16 @@
             <br style="clear: fix">
 
             <div>
-                <a class="btn green" href="#" id="start-video-call">
-                    Start Video Call
-                </a>
-                <a class="btn green" href="#" id="start-audio-call">
-                    Start Audio Call
-                </a>
+                <input type="checkbox" id="startCallVideoCheckMark" checked="checked">
+                <label for="startCallVideoCheckMark">Video</label>
+                <input type="checkbox" id="startCallMuteCheckMark">
+                <label for="startCallMuteCheckMark">Mute</label>
+
+                <!--                <a class="btn green" href="#" id="start-video-call">Start Video Call</a>-->
+<!--                <a class="btn green" href="#" id="start-audio-call">Start Audio Call</a>-->
+                <a class="btn green" href="#" id="startCall">Start Call</a>
+
+
                 <a class="btn red" href="#" id="end-call">Stop Call</a>
                 <br>
                 <br>
@@ -387,8 +391,16 @@
     <p><strong id="caller-name"></strong> is calling ...</p>
     <br>
     <div>
-        <button class="btn green" id="acceptCallVideo">Accept Video Call</button>
-        <button class="btn green" id="acceptCallAudio">Accept Audio Call</button>
+        <input type="checkbox" id="acceptCallVideoCheckMark" checked="checked">
+        <label for="acceptCallVideoCheckMark">Video</label>
+        <input type="checkbox" id="acceptCallMuteCheckMark">
+        <label for="acceptCallMuteCheckMark">Mute</label>
+        <br>
+        <a class="btn green" href="#" id="acceptCall">Accept Call</a>
+
+<!--        <button class="btn green" id="acceptCallVideo">Accept Video Call</button>-->
+<!--        <button class="btn green" id="acceptCallAudio">Accept Audio Call</button>-->
+<!--        <button class="btn green" id="acceptCall">Accept Call</button>-->
         <button class="btn red" id="rejectCall">Reject Call</button>
     </div>
 </div>
