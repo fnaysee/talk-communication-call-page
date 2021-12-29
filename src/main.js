@@ -12,7 +12,7 @@ var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnect
 callerTone.loop = true;
 calleeTone.loop = true;
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -38,6 +38,7 @@ let chatAgent = new Podchat({
     asyncRequestTimeout: 50000,
     callRequestTimeout: 4000,
     callOptions: {
+        useInternalTurnAddress: false,
         callTurnIp: "46.32.6.188",
         callDivId: "call-div",
         callVideo: {
@@ -46,8 +47,8 @@ let chatAgent = new Podchat({
         },
         callAudioTagClassName: "podcall-audio",
         callVideoTagClassName: "podcall-video",
-        callPingInterval: 8000,
-        noAnswerTimeout: 15000
+/*        callPingInterval: 8000,
+        noAnswerTimeout: 15000*/
     },
     asyncLogging: {
         onFunction: true,
@@ -57,6 +58,8 @@ let chatAgent = new Podchat({
         actualTiming: false
     }
 });
+
+window.chatAgent = chatAgent;
 
 auth({
     clientId: Config.CLIENT_ID,
@@ -731,3 +734,12 @@ document.getElementById('acceptCall').addEventListener('click', () => {
 
     stopCallTones();
 });
+
+document.getElementById("getCallParticipants").addEventListener("click", function (event) {
+    event.preventDefault();
+
+    chatAgent.getCallParticipants({
+        callId
+    })
+});
+
