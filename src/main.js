@@ -12,7 +12,7 @@ var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnect
 callerTone.loop = true;
 calleeTone.loop = true;
 
-const env = 'sandbox';
+const env = 'main';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -38,7 +38,7 @@ let chatAgent = new Podchat({
     asyncRequestTimeout: 50000,
     callRequestTimeout: 4000,
     callOptions: {
-        useInternalTurnAddress: false,
+        useInternalTurnAddress: true,
         callTurnIp: "46.32.6.188",
         callDivId: "call-div",
         callVideo: {
@@ -436,7 +436,7 @@ function waitForPartnerToAcceptCall() {
 
 
 document.getElementById('restart-call').addEventListener('click', () => {
-    chatAgent.restartMedia('screenShare');
+    chatAgent.restartMedia();
 });
 
 document.getElementById('end-call').addEventListener('click', () => {
