@@ -12,7 +12,7 @@ var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnect
 callerTone.loop = true;
 calleeTone.loop = true;
 
-const env = 'main';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -38,7 +38,7 @@ let chatAgent = new Podchat({
     asyncRequestTimeout: 50000,
     callRequestTimeout: 4000,
     callOptions: {
-        useInternalTurnAddress: true,
+        useInternalTurnAddress: false,
         callTurnIp: "46.32.6.188",
         callDivId: "call-div",
         callVideo: {
@@ -443,7 +443,7 @@ document.getElementById('end-call').addEventListener('click', () => {
     chatAgent.endCall({
         callId: callId
     }, (result) => {
-        console.log(result)
+        console.log(result);
     });
 
     callInterval && clearInterval(callInterval);
@@ -633,9 +633,9 @@ document.getElementById("startGroupCall").addEventListener("click", function (ev
    event.preventDefault();
     var threadId = document.getElementById("groupCallThreadId").value
         , video =  document.getElementById("groupCallVideoCheckBox").checked
-        //, user1 =  document.getElementById("groupCallUserName1").value
-        //, user2 =  document.getElementById("groupCallUserName2").value
-        //, user3 =  document.getElementById("groupCallUserName3").value
+        , user1 =  document.getElementById("groupCallUserName1").value
+        , user2 =  document.getElementById("groupCallUserName2").value
+        , user3 =  document.getElementById("groupCallUserName3").value
 
     var params = {}, userNames = []
     if(video)
@@ -643,24 +643,26 @@ document.getElementById("startGroupCall").addEventListener("click", function (ev
     else
         params.type = 'voice'
 
-    if(threadId && threadId.length) //{
+    if(threadId && threadId.length) {
         params.threadId = threadId
-    /*} else {
+    } else {
         if(user1 && user1.length)  {
-            userNames.push({"idmuteCallParticipants": user1, "idType": "TO_BE_USER_CONTACT_ID"})
+            userNames.push({"id": user1, "idType": 2})
         }
         if(user2 && user2.length)  {
-            userNames.push({"id": user2, "idType": "TO_BE_USER_CONTACT_ID"})
+            userNames.push({"id": user2, "idType": 2})
         }
         if(user3 && user3.length)  {
-            userNames.push({"id": user3, "idType": "TO_BE_USER_CONTACT_ID"})
+            userNames.push({"id": user3, "idType": 2})
         }
-    }*/
 
-    if(!params.threadId ) {
+        params.invitees = userNames
+    }
+
+/*    if(!params.threadId ) {
         console.log("[call-full] Can not start group call without threadID");
         return
-    }
+    }*/
 
     //if(!params.threadId) {
 
@@ -684,7 +686,9 @@ document.getElementById("terminateGroupCall").addEventListener("click", function
     });
 })*/
 
-document.getElementById("startCall").addEventListener("click", function () {
+document.getElementById("startCall").addEventListener("click", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     var video = document.getElementById("startCallVideoCheckMark").checked;
     var mute = document.getElementById("startCallMuteCheckMark").checked;
 
@@ -694,21 +698,48 @@ document.getElementById("startCall").addEventListener("click", function () {
     if (partnerUsername) {
         chatAgent.createThread({
             "invitees": [
+                //{"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"}
                 {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"}
             ]
-        }, (result) => {
-            console.log(result)
+        }, function (result) {
+            console.log(2)
+            if(result.hasError) {
+                console.log(result);
+                return;
+            }
+
             let newThreadId = result.result.thread.id;
-            chatAgent.getThreadParticipants({
-                threadId: newThreadId
-            }, function (res) {
-                console.log("[call-full][getThreadParticipants]", newThreadId, res);
+            // chatAgent.getThreadParticipants({
+            //     threadId: newThreadId
+            // }, function (res) {
+            //     console.log("[call-full][getThreadParticipants]", newThreadId, res);
+
+
                 chatAgent.startCall({threadId: newThreadId, type: (video ? 'video' : 'voice'), mute: mute});
                 callRequestStateModifier('Calling')
                 callState.callRequested = true;
                 waitForPartnerToAcceptCall()
-            })
+
+
+            //})
         });
+
+        /* chatAgent.startCall({
+            //threadId: newThreadId,
+            "invitees": [
+                {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"},//"TO_BE_USER_USERNAME"},
+                //{"id": "f.naysee", "idType": "TO_BE_USER_USERNAME"}
+            ],
+            type: (video ? 'video' : 'voice'),
+            mute: mute
+        }); */
+        // callRequestStateModifier('Calling')
+        // callState.callRequested = true;
+        // waitForPartnerToAcceptCall()
+
+        /*"invitees": [
+            {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"}
+        ]*/
     } else if (threadId) {
         chatAgent.startCall({threadId: threadId, type: 'voice'});
         callRequestStateModifier('Calling')
@@ -743,3 +774,11 @@ document.getElementById("getCallParticipants").addEventListener("click", functio
     })
 });
 
+
+document.getElementById("sendTestMetadata").addEventListener("click", function (event) {
+    event.preventDefault();
+    var content = document.getElementById("metadataContent").value;
+    chatAgent.sendCallMetaData({
+        content: content
+    });
+});
