@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>PodChat Call (Sandbox)</title>
+    <title>PodChat Call (Janus Test)</title>
     <meta charset="utf-8">
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
     <style>
@@ -186,7 +186,7 @@
 <body>
 <div id="container">
     <div id="header">
-        <h1>POD CHAT CALL (Sandbox)</h1>
+        <h1>POD CHAT CALL (Janus Test)</h1>
 
         <a class="btn outline" href="#" id="sign-out">
             Sign out
@@ -334,6 +334,19 @@
                 <button id="startGroupCall" class="btn green"  style="margin-top: 5px;">Start Group Call</button>
                 <button id="terminateGroupCall" class="btn red"  style="margin-top: 5px;">Terminate call</button>
             </fieldset>
+            <fieldset>
+                <legend>Join Group Call</legend>
+                Enter Call ID:
+                <input type="text" id="groupCallId" placeholder="Call ID">
+
+                <input type="checkbox" id="joinCallVideoCheckMark" checked="checked">
+                <label for="joinCallVideoCheckMark">Video</label>
+                <input type="checkbox" id="joinCallMuteCheckMark">
+                <label for="joinCallMuteCheckMark">Mute</label>
+                <br>
+                <button id="joinTheCall" class="btn blue"  style="margin-top: 5px;">Join Group Call</button>
+            </fieldset>
+
             <hr>
             <br>
             <fieldset>
@@ -347,15 +360,31 @@
                 <button id="customRecordingStart">Start</button>
                 <button id="customRecordingStop">Stop</button>
             </fieldset>
-
+            <br>
             <hr>
             <br>
+
             <fieldset>
                 <legend>Test Metadata</legend>
                 <input type="text" id="metadataContent">
                 <button id="sendTestMetadata">Send</button>
             </fieldset>
 
+            <br>
+            <hr>
+            <br>
+
+            <fieldset>
+                <legend>ScreenShare Resize</legend>
+                <button>Resolution 320x180</button>
+                <button>Resolution 800x600</button>
+                <button>Resolution 2000x1400</button>
+                <button id="makeScreenShareFullScreen">Full Screen Video Tag</button>
+            </fieldset>
+
+            <br>
+            <hr>
+            <br>
 
             <table>
                 <tr>

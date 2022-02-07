@@ -12,7 +12,9 @@ var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnect
 callerTone.loop = true;
 calleeTone.loop = true;
 
-const env = 'local';
+let wantsToJoinAGroupCall = false;
+
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -36,7 +38,7 @@ let chatAgent = new Podchat({
     httpUploadRequestTimeout: 0,
     forceWaitQueueInMemory: true,
     asyncRequestTimeout: 50000,
-    callRequestTimeout: 4000,
+    callRequestTimeout: 15000,
     callOptions: {
         useInternalTurnAddress: false,
         callTurnIp: "46.32.6.188",
@@ -152,7 +154,16 @@ chatAgent.on('callEvents', function (event) {
 
     switch (type) {
         case 'CALL_DIVS':
-            callDivs = event.result.uiElements
+            callDivs = event.result.uiElements;
+            console.log({callDivs});
+
+            for(var i in callDivs) {
+                if(i === 'screenShare') {
+                    callDivs[i].container.append("<button id='closeFullScreenSharing' >Close</button>");
+                }
+            }
+
+
             break;
         case 'POOR_VIDEO_CONNECTION':
             const p = document.createElement('p');
@@ -226,6 +237,9 @@ chatAgent.on('callEvents', function (event) {
             break;
 
         case 'CALL_STARTED':
+            if(wantsToJoinAGroupCall) {
+                callId = document.getElementById("groupCallId").value;
+            }
             callState.callStarted = true;
 
             document.getElementById('call-receive-broker').innerText = event.result.chatDataDto.brokerAddress.split(',')[0];
@@ -702,7 +716,6 @@ document.getElementById("startCall").addEventListener("click", function (event) 
                 {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"}
             ]
         }, function (result) {
-            console.log(2)
             if(result.hasError) {
                 console.log(result);
                 return;
@@ -724,15 +737,20 @@ document.getElementById("startCall").addEventListener("click", function (event) 
             //})
         });
 
-        /* chatAgent.startCall({
-            //threadId: newThreadId,
-            "invitees": [
+        /*chatAgent.startCall({
+             //threadId: newThreadId,
+             "invitees": [
                 {"id": partnerUsername, "idType": "TO_BE_USER_USERNAME"},//"TO_BE_USER_USERNAME"},
                 //{"id": "f.naysee", "idType": "TO_BE_USER_USERNAME"}
-            ],
-            type: (video ? 'video' : 'voice'),
-            mute: mute
-        }); */
+             ],
+             type: (video ? 'video' : 'voice'),
+             mute: mute,
+             threadInfo: {
+                 title: 'Chat test',
+                 description: 'Test'
+             }
+        });*/
+
         // callRequestStateModifier('Calling')
         // callState.callRequested = true;
         // waitForPartnerToAcceptCall()
@@ -782,3 +800,42 @@ document.getElementById("sendTestMetadata").addEventListener("click", function (
         content: content
     });
 });
+
+document.getElementById("joinTheCall").addEventListener("click", function (event) {
+    event.preventDefault();
+    var cId = document.getElementById("groupCallId").value;
+    var video = document.getElementById("joinCallVideoCheckMark").checked;
+    var mute = document.getElementById("joinCallMuteCheckMark").checked;
+
+    callId = cId;
+
+    chatAgent.acceptCall({
+        callId: callId,
+        video: video,
+        mute: mute,
+        cameraPaused: false,
+        joinCall: true
+    }, function (result) {
+        // document.getElementById('caller-modal').style.display = 'none';
+        // document.getElementById('container').classList.remove('blur');
+    });
+})
+
+document.body.addEventListener('click', function (event) {
+    event.preventDefault();
+    if(event.target.id === 'closeFullScreenSharing') {
+        for(var i in callDivs) {
+            if(i === 'screenShare') {
+                callDivs[i].container.classList.remove('fullScreenScreenShare');
+            }
+        }
+    }
+})
+
+document.getElementById("makeScreenShareFullScreen").addEventListener("click", function (event) {
+    for(var i in callDivs) {
+        if (i === 'screenShare') {
+            callDivs[i].container.classList.add('fullScreenScreenShare');
+        }
+    }
+})
