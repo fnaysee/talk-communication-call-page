@@ -14,7 +14,7 @@ calleeTone.loop = true;
 
 let wantsToJoinAGroupCall = false;
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -159,7 +159,8 @@ chatAgent.on('callEvents', function (event) {
 
             for(var i in callDivs) {
                 if(i === 'screenShare') {
-                    callDivs[i].container.append("<button id='closeFullScreenSharing' >Close</button>");
+                    //callDivs[i].container.append("<button id='closeFullScreenSharing' >Close</button>");
+                    callDivs[i].container.innerHTML +=  "<button id='closeFullScreenSharing' >Close</button>"
                 }
             }
 
