@@ -14,7 +14,7 @@ calleeTone.loop = true;
 
 let wantsToJoinAGroupCall = false;
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -158,14 +158,13 @@ chatAgent.on('callEvents', function (event) {
             console.log({callDivs});
 
             for(var i in callDivs) {
-                if(i === 'screenShare') {
+                if(i === 'screenShare' && !document.getElementById('closeFullScreenSharing')) {
                     //callDivs[i].container.append("<button id='closeFullScreenSharing' >Close</button>");
                     callDivs[i].container.innerHTML +=  "<button id='closeFullScreenSharing' >Close</button>"
                 }
             }
-
-
             break;
+
         case 'POOR_VIDEO_CONNECTION':
             const p = document.createElement('p');
             p.innerText = 'Connection is poor...';
@@ -825,18 +824,20 @@ document.getElementById("joinTheCall").addEventListener("click", function (event
 document.body.addEventListener('click', function (event) {
     event.preventDefault();
     if(event.target.id === 'closeFullScreenSharing') {
-        for(var i in callDivs) {
-            if(i === 'screenShare') {
-                callDivs[i].container.classList.remove('fullScreenScreenShare');
-            }
-        }
+        callDivs['screenShare'].container.classList.remove('fullSizeScreenShare');
     }
 })
 
 document.getElementById("makeScreenShareFullScreen").addEventListener("click", function (event) {
     for(var i in callDivs) {
         if (i === 'screenShare') {
-            callDivs[i].container.classList.add('fullScreenScreenShare');
+            callDivs[i].container.classList.add('fullSizeScreenShare');
         }
     }
-})
+});
+
+window.setScreenShareSize = function (width, height) {
+    chatAgent.resizeScreenShare({
+        width, height
+    });
+}
