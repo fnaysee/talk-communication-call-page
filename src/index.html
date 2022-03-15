@@ -2,9 +2,9 @@
 <html>
 
 <head>
-    <title>PodChat Call (Janus Test)</title>
+    <title>PodChat Call (Sandbox)</title>
     <meta charset="utf-8">
-    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+<!--    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">-->
     <style>
         html, body {
             font-family: monospace, tahoma;
@@ -207,7 +207,7 @@
 <body>
 <div id="container">
     <div id="header">
-        <h1>POD CHAT CALL (Janus Test)</h1>
+        <h1>POD CHAT CALL (Sandbox)</h1>
 
         <a class="btn outline" href="#" id="sign-out">
             Sign out
@@ -292,6 +292,27 @@
             <br>
             <br>
 
+            <style>
+                #call-participants-list-container {
+                    display: none;
+                }
+                #call-participants-list-container.visible {
+                    display: block;
+                }
+                #call-participants-list {
+                    flex-flow: row;
+                    flex-wrap: wrap;
+                }
+            </style>
+            <div id="call-participants-list-container" style="background-color: #eeeeee">
+                Call Particpants:
+                <div id="call-participants-list" style="display: flex"></div>
+            </div>
+
+
+            <br>
+            <br>
+
             <div class="video-wrapper" id="call-div">
             </div>
 
@@ -323,6 +344,8 @@
 
                 <button id="toggle-mice" class="btn outline " style="margin-top: 5px;">Pause/Resume Mice</button>
                 <button id="toggle-screen-share" class="btn outline "  style="margin-top: 5px;">Start/Stop ScreenShare</button>
+                <button id="toggle-others-video" class="btn outline "  style="margin-top: 5px;">Toggle Video Receive</button>
+
                 <br>
                 <br>
                 <button id="getCallParticipants" class="btn">Get Participants List</button>
@@ -350,7 +373,8 @@
                 <input type="text" id="groupCallUserName2" placeholder="Contact ID">
                 <input type="text" id="groupCallUserName3" placeholder="Contact ID">
                 <br>
-                <input type="checkbox" id="groupCallVideoCheckBox"> Video Call
+                <input type="checkbox" id="groupCallVideoCheckBox">
+                <label for="groupCallVideoCheckBox">Video Call</label>
                 <br>
                 <button id="startGroupCall" class="btn green"  style="margin-top: 5px;">Start Group Call</button>
                 <button id="terminateGroupCall" class="btn red"  style="margin-top: 5px;">Terminate call</button>
@@ -397,10 +421,11 @@
 
             <fieldset>
                 <legend>ScreenShare Resize</legend>
-                <button onclick="setScreenShareSize(320, 180)">Resolution 320x180</button>
-                <button onclick="setScreenShareSize(800, 600)">Resolution 800x600</button>
-                <button  onclick="setScreenShareSize(2000, 1400)">Resolution 2000x1400</button>
-                <button id="makeScreenShareFullScreen">Full Screen Video Tag</button>
+                <button type="button" onclick="setScreenShareSize(0)">Resolution 0</button>
+                <button type="button" onclick="setScreenShareSize(1)">Resolution 1</button>
+                <button type="button" onclick="setScreenShareSize(2)">Resolution 2</button>
+                <button type="button" onclick="setScreenShareSize(3)">Resolution 3</button>
+                <button type="button" id="makeScreenShareFullScreen">Full Screen Video Tag</button>
             </fieldset>
 
             <br>
@@ -426,7 +451,7 @@
         </fieldset>
     </form>
     <div class="stats-box"></div>
-    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1400.11.23 (podchat-browser@not versioned)</p>
+    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1400.12.18 (podchat-browser@12.4.0-snapshot.1)</p>
 </div>
 
 <div id="callee-modal">

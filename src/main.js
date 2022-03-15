@@ -12,9 +12,11 @@ var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnect
 callerTone.loop = true;
 calleeTone.loop = true;
 
-let wantsToJoinAGroupCall = false;
+let wantsToJoinAGroupCall = false
+    , callUsersListElement = document.getElementById("call-participants-list")
+    , currentCallThreadId;
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -40,6 +42,7 @@ let chatAgent = new Podchat({
     asyncRequestTimeout: 50000,
     callRequestTimeout: 15000,
     callOptions: {
+        callNoAnswerTimeout: 20000,
         useInternalTurnAddress: false,
         callTurnIp: "46.32.6.188",
         callDivId: "call-div",
@@ -224,7 +227,8 @@ chatAgent.on('callEvents', function (event) {
             document.getElementById('call-div').innerHTML = '';
             document.getElementById('call-duration').innerText = 0;
 
-            if(event.result.conversationVO)
+            if(event.result.conversationVO){
+                currentCallThreadId = event.result.conversationVO.id
                 chatAgent.getThreads({threadIds: [event.result.conversationVO.id]}, (thread) => {
                     document.getElementById('container').classList.add('blur');
                     document.getElementById('callee-modal').style.display = 'flex';
@@ -233,10 +237,19 @@ chatAgent.on('callEvents', function (event) {
 
                     callerTone.play();
                 });
+            }
 
             break;
 
         case 'CALL_STARTED':
+            document.getElementById("call-participants-list-container").classList.add("visible")
+            var currentUser = chatAgent.getCurrentUser();
+             var callUsers = event.result.otherClientDtoList;
+             for(var i in callUsers) {
+                 setupParticipantTemplate(callUsers[i].userId);
+             }
+
+
             if(wantsToJoinAGroupCall) {
                 callId = document.getElementById("groupCallId").value;
             }
@@ -264,13 +277,14 @@ chatAgent.on('callEvents', function (event) {
                 document.getElementById('caller-modal').style.display = 'none';
                 document.getElementById('callee-modal').style.display = 'none';
                 document.getElementById('container').classList.remove('blur');
-
                 stopCallTones();
             } else {
                 callState.callStarted = false;
                 callState.callStartedElsewhere = false;
                 callState.callRequested = false;
                 callId = null;
+
+                removeParticipantsElements();
                 document.getElementById('call-receive-id').innerText = '';
                 document.getElementById('call-div').innerHTML = '';
 
@@ -289,6 +303,20 @@ chatAgent.on('callEvents', function (event) {
             document.getElementById('container').classList.remove('blur');
             document.getElementById('callee-modal').style.display = 'none';
             break;
+
+        case "CALL_PARTICIPANT_JOINED":
+            setupParticipantTemplate(event.result[0].userId)
+            break;
+        case "CALL_PARTICIPANT_LEFT":
+            removeParticipantElement(event.result[0].userId)
+            break;
+        case "CALL_PARTICIPANT_MUTE":
+            addParticipantMute(event.result[0].userId);
+            break;
+        case "CALL_PARTICIPANT_UNMUTE":
+            removeParticipantMute(event.result[0].userId);
+            break;
+
         case 'CALL_STATUS':
             // document.getElementById('call-socket-status').innerText = event.errorMessage;
             break;
@@ -302,6 +330,61 @@ chatAgent.on('callEvents', function (event) {
             break;
     }
 });
+
+function setupParticipantTemplate(userId) {
+    var currentUser;
+    chatAgent.getThreadParticipants({threadId: currentCallThreadId}, function (result) {
+        currentUser = result.result.participants.filter(item => item.id === userId)[0];
+        callUsersListElement.append(createCallParticipantTemplate({
+            userId: currentUser.id,
+            username: currentUser.username,
+            image: currentUser.image
+        }));
+    });
+}
+function createCallParticipantTemplate(userInfo) {
+    var userDiv = document.createElement("div");
+
+    userDiv.setAttribute("id", "participant-item-" + userInfo.userId);
+    userDiv.setAttribute("class", "participant-item");
+    userDiv.style.position = 'relative';
+    userDiv.style.width = '15%';
+    userDiv.style.overflow = 'hidden';
+    userDiv.style.padding = '5px';
+
+    var data = `<img src="${userInfo.image}" style="width: 100%; position:relative;" alt="">
+                <div>${userInfo.username}</div>`;
+
+    userDiv.innerHTML = data;
+    return userDiv
+}
+
+function addParticipantMute(userId){
+    if(document.querySelector('#participant-item-' + userId)){
+        let  el = document.querySelector('#participant-item-' + userId);
+        let mute = document.createElement("div")
+        mute.setAttribute("id", 'participant-mute-' + userId)
+        mute.innerText = "Muted";
+        el.appendChild(mute);
+    }
+}
+
+function removeParticipantMute(userId) {
+    if(document.querySelector('#participant-mute-' + userId)) {
+        document.querySelector('#participant-mute-' + userId).remove();
+    }
+}
+
+function removeParticipantsElements() {
+    document.getElementById("call-participants-list-container").classList.remove("visible")
+    callUsersListElement.innerHTML = '';
+}
+
+function removeParticipantElement(userId) {
+    if(document.querySelector('#participant-item-' + userId))
+        document.querySelector('#participant-item-' + username).remove();
+
+}
 
 document.getElementById('internet-status').innerHTML = (window.navigator.onLine) ? 'Online' : 'Offline';
 window.addEventListener('online', () => document.getElementById('internet-status').innerHTML = 'Online');
@@ -459,21 +542,6 @@ document.getElementById('end-call').addEventListener('click', () => {
     }, (result) => {
         console.log(result);
     });
-
-    callInterval && clearInterval(callInterval);
-
-    callId = null;
-    document.getElementById('call-receive-id').innerText = '';
-    document.getElementById('call-div').innerHTML = '';
-
-    callInterval && clearInterval(callInterval);
-    document.getElementById('call-div').innerHTML = '';
-
-    document.getElementById('caller-modal').style.display = 'none';
-    document.getElementById('callee-modal').style.display = 'none';
-    document.getElementById('container').classList.remove('blur');
-
-    stopCallTones();
 });
 
 document.getElementById('start-recording-call').addEventListener('click', () => {
@@ -721,6 +789,7 @@ document.getElementById("startCall").addEventListener("click", function (event) 
                 return;
             }
 
+            console.log("=====>", result.result)
             let newThreadId = result.result.thread.id;
             // chatAgent.getThreadParticipants({
             //     threadId: newThreadId
@@ -822,13 +891,16 @@ document.getElementById("joinTheCall").addEventListener("click", function (event
 })
 
 document.body.addEventListener('click', function (event) {
-    event.preventDefault();
+
     if(event.target.id === 'closeFullScreenSharing') {
+        event.preventDefault();
         callDivs['screenShare'].container.classList.remove('fullSizeScreenShare');
     }
 })
 
 document.getElementById("makeScreenShareFullScreen").addEventListener("click", function (event) {
+    event.preventDefault();
+
     for(var i in callDivs) {
         if (i === 'screenShare') {
             callDivs[i].container.classList.add('fullSizeScreenShare');
@@ -836,8 +908,38 @@ document.getElementById("makeScreenShareFullScreen").addEventListener("click", f
     }
 });
 
-window.setScreenShareSize = function (width, height) {
+window.setScreenShareSize = function (quality) {
     chatAgent.resizeScreenShare({
-        width, height
+        quality: quality
     });
 }
+
+var videoReceiveEnabled = true;
+document.getElementById("toggle-others-video").addEventListener("click", function (event) {
+    event.preventDefault();
+    var myId = chatAgent.getCurrentUser().id;
+
+    var ids = Object.keys(callDivs),
+        filteredIds = [];
+
+    for(var i of ids) {
+        if(i !== 'screenShare' && +i !== myId) {
+            filteredIds.push(i)
+        }
+    }
+
+    if(videoReceiveEnabled) {
+        console.log("[call-full] Video receive is enabled, now disabling...", filteredIds);
+        chatAgent.disableParticipantsVideoReceive({
+            userIds: filteredIds
+        });
+        videoReceiveEnabled = false;
+    } else {
+        console.log("[call-full] Video receive is disabled, now enabling...");
+        chatAgent.enableParticipantsVideoReceive({
+            userIds:  filteredIds
+        });
+        videoReceiveEnabled = true;
+
+    }
+});
