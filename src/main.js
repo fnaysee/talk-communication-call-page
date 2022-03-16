@@ -243,12 +243,20 @@ chatAgent.on('callEvents', function (event) {
 
         case 'CALL_STARTED':
             document.getElementById("call-participants-list-container").classList.add("visible")
-            var currentUser = chatAgent.getCurrentUser();
-             var callUsers = event.result.otherClientDtoList;
-             for(var i in callUsers) {
-                 setupParticipantTemplate(callUsers[i].userId);
-             }
 
+            chatAgent.getCallParticipants({
+                callId
+            });
+
+/*            if(currentCallThreadId) {
+                var callUsers = event.result.otherClientDtoList;
+                for(var i in callUsers) {
+                    setupParticipantTemplate(callUsers[i].userId);
+                }
+            }*/
+            // var currentUser = chatAgent.getCurrentUser();
+
+            // console.log("getCallParticipants o", JSON.stringify(hh));
 
             if(wantsToJoinAGroupCall) {
                 callId = document.getElementById("groupCallId").value;
@@ -304,11 +312,29 @@ chatAgent.on('callEvents', function (event) {
             document.getElementById('callee-modal').style.display = 'none';
             break;
 
+        case "CALL_PARTICIPANTS_LIST_CHANGE":
+            console.log(event)
+            callUsersListElement.innerHTML = '';
+            for(let i in event.result.participants) {
+                let user = event.result.participants[i].participantVO
+                callUsersListElement.append(createCallParticipantTemplate({
+                    userId: user.id,
+                    username: user.username,
+                    image: user.image
+                }));
+            }
+            break;
         case "CALL_PARTICIPANT_JOINED":
-            setupParticipantTemplate(event.result[0].userId)
+            chatAgent.getCallParticipants({
+                callId
+            });
+            // setupParticipantTemplate(event.result[0].userId)
             break;
         case "CALL_PARTICIPANT_LEFT":
-            removeParticipantElement(event.result[0].userId)
+            chatAgent.getCallParticipants({
+                callId
+            });
+            // removeParticipantElement(event.result[0].userId)
             break;
         case "CALL_PARTICIPANT_MUTE":
             addParticipantMute(event.result[0].userId);
@@ -789,7 +815,6 @@ document.getElementById("startCall").addEventListener("click", function (event) 
                 return;
             }
 
-            console.log("=====>", result.result)
             let newThreadId = result.result.thread.id;
             // chatAgent.getThreadParticipants({
             //     threadId: newThreadId
@@ -910,7 +935,7 @@ document.getElementById("makeScreenShareFullScreen").addEventListener("click", f
 
 window.setScreenShareSize = function (quality) {
     chatAgent.resizeScreenShare({
-        quality: quality
+        quality: quality //Possible values: 1,2,3,4
     });
 }
 
