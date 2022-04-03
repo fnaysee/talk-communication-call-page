@@ -357,6 +357,38 @@ chatAgent.on('callEvents', function (event) {
     }
 });
 
+chatAgent.on("callStreamEvents", function (event) {
+    console.log(event)
+
+    switch (event.type) {
+        case 'USER_SPEAKING':
+            showVoiceIndicator(event)
+            break;
+    }
+
+});
+
+function showVoiceIndicator(data){
+    let el = document.querySelector('#speaking-indicator-' + data.userId)
+    if(!el) {
+        el = document.createElement('div');
+        el.setAttribute("id",  'speaking-indicator-' + data.userId);
+        el.setAttribute('level', data.audioLevel)
+        el.style.position = 'absolute';
+        el.style.bottom = 0;
+        el.style.width = '100%';
+        el.style.backgroundColor = 'rgba(100, 100, 100, .3)';
+        el.style.height = `${(data.audioLevel * 10) }%`;
+        el.classList.add("speaking-indicator");
+        if(callDivs[data.userId]) {
+            callDivs[data.userId].container.appendChild(el);
+        }
+        //document.getElementById("callParticipantWrapper-" + event.metadata.userId).appendChild(p);
+    } else {
+        el.style.height = `${(data.audioLevel * 10) }%`;
+    }
+}
+
 function setupParticipantTemplate(userId) {
     var currentUser;
     chatAgent.getThreadParticipants({threadId: currentCallThreadId}, function (result) {
@@ -965,6 +997,5 @@ document.getElementById("toggle-others-video").addEventListener("click", functio
             userIds:  filteredIds
         });
         videoReceiveEnabled = true;
-
     }
 });
