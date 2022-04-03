@@ -16,7 +16,7 @@ let wantsToJoinAGroupCall = false
     , callUsersListElement = document.getElementById("call-participants-list")
     , currentCallThreadId;
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -358,7 +358,7 @@ chatAgent.on('callEvents', function (event) {
 });
 
 chatAgent.on("callStreamEvents", function (event) {
-    console.log(event)
+    // console.log(event)
 
     switch (event.type) {
         case 'USER_SPEAKING':
