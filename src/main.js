@@ -16,7 +16,7 @@ let wantsToJoinAGroupCall = false
     , callUsersListElement = document.getElementById("call-participants-list")
     , currentCallThreadId;
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
