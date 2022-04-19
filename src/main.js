@@ -5,6 +5,19 @@ import Podchat from 'podchat-browser';
 
 import Config from './scripts/Config';
 
+
+import imgSad from "./stickers/sad.gif"
+import imgBored from "./stickers/bored.gif"
+import imgCoolBeefy from "./stickers/cool-beefy.gif"
+import imgCool from "./stickers/cool.gif"
+import imgCrazy from "./stickers/crazy.gif"
+import imgDisappointed from "./stickers/disappointed.gif"
+import imgGoodMorning from "./stickers/good-morning-wave.gif"
+import imgHappy from "./stickers/happy.gif"
+import imgPositive from "./stickers/positive.gif"
+
+
+
 var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnectTime,
     callerTone = new Audio('./callerTone.ogg'),
     calleeTone = new Audio('./calleeTone.ogg');
@@ -16,7 +29,7 @@ let wantsToJoinAGroupCall = false
     , callUsersListElement = document.getElementById("call-participants-list")
     , currentCallThreadId;
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -281,7 +294,7 @@ chatAgent.on('callEvents', function (event) {
             break;
 
         case 'CALL_ENDED':
-            if(event.callId !== callId) {
+            if(event.callId != callId) {
                 document.getElementById('caller-modal').style.display = 'none';
                 document.getElementById('callee-modal').style.display = 'none';
                 document.getElementById('container').classList.remove('blur');
@@ -350,6 +363,9 @@ chatAgent.on('callEvents', function (event) {
         case 'CALL_ERROR':
             // document.getElementById('call-socket-status').innerText = event.errorMessage;
             stopCallTones();
+            break;
+        case 'CUSTOM_USER_METADATA':
+            showStickerIfNecessary(event)
             break;
 
         default:
@@ -999,3 +1015,59 @@ document.getElementById("toggle-others-video").addEventListener("click", functio
         videoReceiveEnabled = true;
     }
 });
+
+function showStickerIfNecessary(event) {
+    if(event.content && event.content.sender !== 'callFull')
+        return;
+
+
+    let el = document.querySelector('#sticker-box-' + event.userId)
+    if(el)
+        el.remove();
+
+    el = document.createElement('div');
+    el.setAttribute("id",  'sticker-box-' + event.userId);
+    el.classList.add("sticker-box");
+
+    let sticker = document.createElement("img");
+    sticker.style.width = '70px';
+    sticker.style.height = '70px';
+    el.appendChild(sticker);
+    if(callDivs[data.userId]) {
+        callDivs[data.userId].container.appendChild(el);
+        setTimeout(function () {
+            document.getElementById("sticker-box-" + event.userId).remove()
+        }, 5000)
+    }
+}
+
+
+let stickers = [imgSad, imgCrazy, imgCool, imgCoolBeefy, imgBored, imgHappy, imgDisappointed, imgGoodMorning, imgPositive]
+let stickersContainer = document.getElementById("stickers");
+for(let sticky of stickers){
+    let element = document.createElement('img');
+    element.setAttribute('src', sticky);
+    element.setAttribute("class", 'sticker')
+    element.style.width = '40px'
+    element.style.height = '40px'
+    stickersContainer.append(element);
+}
+
+var sticker = document.getElementsByClassName("sticker");
+
+var sendSticker = function() {
+    var src = this.getAttribute("src");
+
+    let data = src.split('/')
+    chatAgent.sendCallMetaData({
+        content: {
+            sender: 'callFull',
+            eventType: 'showSticker',
+            name: data[data.length - 1]
+        }
+    })
+};
+
+for (var i = 0; i < sticker.length; i++) {
+    sticker[i].addEventListener('click', sendSticker, false);
+}

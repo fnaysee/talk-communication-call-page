@@ -11,6 +11,7 @@ module.exports = (env) => {
         },
 
         output: {
+            publicPath: '/',
             filename: 'bundle.js',
             path: path.join(root, 'dist')
         },
@@ -29,6 +30,16 @@ module.exports = (env) => {
                     options: {
                         name: '[name].[ext]',
                     },
+                },
+                {
+                    test: /\.(png|jpe?g|gif)$/i,
+                    loader: 'file-loader',
+                    options: {
+                        outputPath: 'stickers/',
+                        name: '[name].[ext]',
+                        url: true,
+                        publicPath: './stickers/',
+                    }
                 },
                 {
                     test: /\.css$/,

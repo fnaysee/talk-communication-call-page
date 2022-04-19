@@ -201,6 +201,18 @@
             display: inline-block;
         }
 
+        .sticker-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            backgroundColor: rgba(28,59,141,0.63);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
     </style>
 </head>
 
@@ -268,6 +280,8 @@
                         <option value="e.salehi">E. Salehi</option>
                         <option value="SA.sajjadi">Ahmad Sajadi</option>
                         <option value="a.shafiei">Arash Shafiei</option>
+                        <option value="f.ebrahimian">ّFereshte Ebrahimian</option>
+                        <option value="n.haghgoo">ّNeda haghgoo</option>
                         <option value="f.naysee">Farhan Naysee</option>
                     </select>
 
@@ -350,6 +364,21 @@
                 <br>
                 <button id="getCallParticipants" class="btn">Get Participants List</button>
             </div>
+
+            <br style="clear: fix">
+
+            <style>
+                .sticker {
+                    width: 40px;
+                    height: 40px
+                }
+            </style>
+            <fieldset>
+                <legend>Stickers</legend>
+                <div id="stickers">
+
+                </div>
+            </fieldset>
 
             <br style="clear: fix">
 
@@ -451,7 +480,7 @@
         </fieldset>
     </form>
     <div class="stats-box"></div>
-    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1401.1.15 (podchat-browser@12.5.0-snapshot.9)</p>
+    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1401.1.28 (podchat-browser@12.5.0-snapshot.13)</p>
 </div>
 
 <div id="analyser"></div>
