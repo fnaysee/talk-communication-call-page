@@ -29,7 +29,7 @@ let wantsToJoinAGroupCall = false
     , callUsersListElement = document.getElementById("call-participants-list")
     , currentCallThreadId;
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -1016,10 +1016,11 @@ document.getElementById("toggle-others-video").addEventListener("click", functio
     }
 });
 
-function showStickerIfNecessary(event) {
-    if(event.content && event.content.sender !== 'callFull')
-        return;
 
+let stickers = [imgSad, imgCrazy, imgCool, imgCoolBeefy, imgBored, imgHappy, imgDisappointed, imgGoodMorning, imgPositive]
+function showStickerIfNecessary(event) {
+    if(event.content && (event.content.sender !== 'callFull' || event.content.eventType !== 'showSticker'))
+        return;
 
     let el = document.querySelector('#sticker-box-' + event.userId)
     if(el)
@@ -1032,6 +1033,13 @@ function showStickerIfNecessary(event) {
     let sticker = document.createElement("img");
     sticker.style.width = '70px';
     sticker.style.height = '70px';
+
+    for(let stick in stickers) {
+        if(stick.indexOf(event.content.name) !== -1) {
+            sticker.src = stick;
+        }
+    }
+
     el.appendChild(sticker);
     if(callDivs[event.userId]) {
         callDivs[event.userId].container.appendChild(el);
@@ -1041,8 +1049,6 @@ function showStickerIfNecessary(event) {
     }
 }
 
-
-let stickers = [imgSad, imgCrazy, imgCool, imgCoolBeefy, imgBored, imgHappy, imgDisappointed, imgGoodMorning, imgPositive]
 let stickersContainer = document.getElementById("stickers");
 for(let sticky of stickers){
     let element = document.createElement('img');
