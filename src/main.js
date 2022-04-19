@@ -6,15 +6,21 @@ import Podchat from 'podchat-browser';
 import Config from './scripts/Config';
 
 
-import imgSad from "./stickers/sad.gif"
-import imgBored from "./stickers/bored.gif"
-import imgCoolBeefy from "./stickers/cool-beefy.gif"
-import imgCool from "./stickers/cool.gif"
-import imgCrazy from "./stickers/crazy.gif"
-import imgDisappointed from "./stickers/disappointed.gif"
-import imgGoodMorning from "./stickers/good-morning-wave.gif"
-import imgHappy from "./stickers/happy.gif"
-import imgPositive from "./stickers/positive.gif"
+const stickersList = [ "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sad.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/bored.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/1489408a302319a18d582196d3f52c4bc75981af/cool-beefy.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/cool.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/crazy.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/disappointed.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/happy.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/positive.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/negative.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sports.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sunglasses-smoking.gif"
+,"https://raw.githubusercontent.com/fnaysee/stickers-test/master/thinking.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/tongue-out-teasing.gif"
+, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/kittens.gif"
+]
 
 
 
@@ -1017,7 +1023,6 @@ document.getElementById("toggle-others-video").addEventListener("click", functio
 });
 
 
-let stickers = [imgSad, imgCrazy, imgCool, imgCoolBeefy, imgBored, imgHappy, imgDisappointed, imgGoodMorning, imgPositive]
 function showStickerIfNecessary(event) {
     if(event.content && (event.content.sender !== 'callFull' || event.content.eventType !== 'showSticker'))
         return;
@@ -1031,12 +1036,15 @@ function showStickerIfNecessary(event) {
     el.classList.add("sticker-box");
 
     let sticker = document.createElement("img");
-    sticker.style.width = '70px';
-    sticker.style.height = '70px';
+    sticker.style.width = '90px';
+    sticker.style.height = '90px';
+    sticker.style.opacity = '.7'
 
-    for(let stick in stickers) {
+    console.log(event.content.name)
+    for(let stick of stickersList) {
         if(stick.indexOf(event.content.name) !== -1) {
-            sticker.src = stick;
+            console.log('found it')
+            sticker.setAttribute("src",  stick);
         }
     }
 
@@ -1050,7 +1058,7 @@ function showStickerIfNecessary(event) {
 }
 
 let stickersContainer = document.getElementById("stickers");
-for(let sticky of stickers){
+for(let sticky of stickersList){
     let element = document.createElement('img');
     element.setAttribute('src', sticky);
     element.setAttribute("class", 'sticker')
