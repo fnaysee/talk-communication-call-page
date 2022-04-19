@@ -1033,8 +1033,8 @@ function showStickerIfNecessary(event) {
     sticker.style.width = '70px';
     sticker.style.height = '70px';
     el.appendChild(sticker);
-    if(callDivs[data.userId]) {
-        callDivs[data.userId].container.appendChild(el);
+    if(callDivs[event.userId]) {
+        callDivs[event.userId].container.appendChild(el);
         setTimeout(function () {
             document.getElementById("sticker-box-" + event.userId).remove()
         }, 5000)
