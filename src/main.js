@@ -1038,12 +1038,11 @@ function showStickerIfNecessary(event) {
     let sticker = document.createElement("img");
     sticker.style.width = '90px';
     sticker.style.height = '90px';
-    sticker.style.opacity = '.7'
+    sticker.style.opacity = '.9'
 
     console.log(event.content.name)
     for(let stick of stickersList) {
         if(stick.indexOf(event.content.name) !== -1) {
-            console.log('found it')
             sticker.setAttribute("src",  stick);
         }
     }
