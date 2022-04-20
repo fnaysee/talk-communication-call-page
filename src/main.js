@@ -42,7 +42,7 @@ let wantsToJoinAGroupCall = false
     , callUsersListElement = document.getElementById("call-participants-list")
     , currentCallThreadId;
 
-const env = 'sandbox';
+const env = 'local';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -1026,7 +1026,7 @@ function showStickerIfNecessary(event) {
 
 }
 
-function showImageSticker(event) {
+function showTextSticker(event) {
     let el = document.querySelector('#sticker-box-video-' + event.userId)
     if(el)
         el.remove();
@@ -1048,7 +1048,7 @@ function showImageSticker(event) {
         }, 5000)
     }
 }
-function showTextSticker(event) {
+function showImageSticker(event) {
     let el = document.querySelector('#sticker-box-avatar-' + event.userId)
     if(el)
         el.remove();
@@ -1099,11 +1099,9 @@ for(let sticky of textStickersList){
     stickersContainer.append(element);
 }
 
-var sticker = document.getElementsByClassName("sticker");
-
 var sendSticker = function() {
     if(!callId) {
-        console.warn("[call-full] Start video call to send stickers");
+        console.warn("[call-full] Start call to send stickers");
         return;
     }
 
@@ -1118,28 +1116,28 @@ var sendSticker = function() {
         }
     })
 };
-
-for (var i = 0; i < sticker.length; i++) {
-    sticker[i].addEventListener('click', sendSticker, false);
+var imgSticker = document.getElementsByClassName("sticker");
+for (var i = 0; i < imgSticker.length; i++) {
+    imgSticker[i].addEventListener('click', sendSticker, false);
 }
+
 var sendTextSticker = function() {
     if(!callId) {
         console.warn("[call-full] Start video call to send text stickers");
         return;
     }
 
-    let src = this.getAttribute("src")
-        , data = src.split('/');
+    let data = this.innerText;
 
     chatAgent.sendCallMetaData({
         content: {
             sender: 'callFull',
             eventType: 'showTextSticker',
-            name: data[data.length - 1]
+            name: data
         }
     })
 };
-
-for (var i = 0; i < sticker.length; i++) {
-    sticker[i].addEventListener('click', sendTextSticker, false);
+var textSticker = document.getElementsByClassName("text-sticker")
+for (var i = 0; i < textSticker.length; i++) {
+    textSticker[i].addEventListener('click', sendTextSticker, false);
 }
