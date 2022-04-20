@@ -6,23 +6,30 @@ import Podchat from 'podchat-browser';
 import Config from './scripts/Config';
 
 
-const stickersList = [ "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sad.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/bored.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/1489408a302319a18d582196d3f52c4bc75981af/cool-beefy.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/cool.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/crazy.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/disappointed.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/happy.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/positive.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/negative.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sports.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sunglasses-smoking.gif"
-,"https://raw.githubusercontent.com/fnaysee/stickers-test/master/thinking.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/tongue-out-teasing.gif"
-, "https://raw.githubusercontent.com/fnaysee/stickers-test/master/kittens.gif"
+const stickersList = [
+    "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sad.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/bored.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/1489408a302319a18d582196d3f52c4bc75981af/cool-beefy.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/cool.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/crazy.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/disappointed.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/happy.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/positive.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/negative.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sports.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sunglasses-smoking.gif"
+    ,"https://raw.githubusercontent.com/fnaysee/stickers-test/master/thinking.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/tongue-out-teasing.gif"
+    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/kittens.gif"
+];
+const textStickersList = [
+    'سلام به همه', 'درود بر شما', 'سلام عمو',
+    'ایول', 'مرسی', 'دمت گرم',
+    'صدام میاد ؟', 'صداتو ندارم', 'تصویرم هست ؟', 'تصویرتو ندارم', 'اره اوکی شد!',
+    'وبکمم باز مونده', 'خطای کنسولی دارم', 'کانکشنت ضعیف شد', 'برو تب Network و WS رو ببین',
+    'مشکل تو SDK ه', 'مشکل تو چته', 'مشکل تو کامه',
+    'من حرف بزنم ؟', 'آب قطعه', 'Such a WoW', '!! نگا اسنیل گنگو !!'
 ]
-
-
 
 var callInterval, callStartTime, callId, newCallId, reconnectInterval, reconnectTime,
     callerTone = new Audio('./callerTone.ogg'),
@@ -35,7 +42,7 @@ let wantsToJoinAGroupCall = false
     , callUsersListElement = document.getElementById("call-participants-list")
     , currentCallThreadId;
 
-const env = 'local';
+const env = 'sandbox';
 
 let chatAgent = new Podchat({
     appId: 'CallTest',
@@ -267,16 +274,6 @@ chatAgent.on('callEvents', function (event) {
                 callId
             });
 
-/*            if(currentCallThreadId) {
-                var callUsers = event.result.otherClientDtoList;
-                for(var i in callUsers) {
-                    setupParticipantTemplate(callUsers[i].userId);
-                }
-            }*/
-            // var currentUser = chatAgent.getCurrentUser();
-
-            // console.log("getCallParticipants o", JSON.stringify(hh));
-
             if(wantsToJoinAGroupCall) {
                 callId = document.getElementById("groupCallId").value;
             }
@@ -347,13 +344,11 @@ chatAgent.on('callEvents', function (event) {
             chatAgent.getCallParticipants({
                 callId
             });
-            // setupParticipantTemplate(event.result[0].userId)
             break;
         case "CALL_PARTICIPANT_LEFT":
             chatAgent.getCallParticipants({
                 callId
             });
-            // removeParticipantElement(event.result[0].userId)
             break;
         case "CALL_PARTICIPANT_MUTE":
             addParticipantMute(event.result[0].userId);
@@ -411,17 +406,6 @@ function showVoiceIndicator(data){
     }
 }
 
-function setupParticipantTemplate(userId) {
-    var currentUser;
-    chatAgent.getThreadParticipants({threadId: currentCallThreadId}, function (result) {
-        currentUser = result.result.participants.filter(item => item.id === userId)[0];
-        callUsersListElement.append(createCallParticipantTemplate({
-            userId: currentUser.id,
-            username: currentUser.username,
-            image: currentUser.image
-        }));
-    });
-}
 function createCallParticipantTemplate(userInfo) {
     var userDiv = document.createElement("div");
 
@@ -1024,23 +1008,60 @@ document.getElementById("toggle-others-video").addEventListener("click", functio
 
 
 function showStickerIfNecessary(event) {
-    if(event.content && (event.content.sender !== 'callFull' || event.content.eventType !== 'showSticker'))
+    if(event.content
+        && (
+            event.content.sender !== 'callFull'
+            || (event.content.eventType !== 'showSticker' && event.content.eventType !== 'showTextSticker')
+        ))
         return;
 
-    let el = document.querySelector('#sticker-box-' + event.userId)
+    switch (event.content.eventType) {
+        case 'showTextSticker':
+            showTextSticker(event)
+            break;
+        case 'showSticker':
+            showImageSticker(event)
+            break
+    }
+
+}
+
+function showImageSticker(event) {
+    let el = document.querySelector('#sticker-box-video-' + event.userId)
     if(el)
         el.remove();
 
     el = document.createElement('div');
-    el.setAttribute("id",  'sticker-box-' + event.userId);
-    el.classList.add("sticker-box");
+    el.setAttribute("id",  'sticker-box-video-' + event.userId);
+    el.classList.add("sticker-box-video");
+
+    let sticker = document.createElement("span");
+    sticker.style.opacity = '.9';
+    sticker.style.color = '#fff';
+    sticker.innerText = event.content.name
+
+    el.appendChild(sticker);
+    if(callDivs[event.userId]) {
+        callDivs[event.userId].container.appendChild(el);
+        setTimeout(function () {
+            document.getElementById("sticker-box-video-" + event.userId).remove()
+        }, 5000)
+    }
+}
+function showTextSticker(event) {
+    let el = document.querySelector('#sticker-box-avatar-' + event.userId)
+    if(el)
+        el.remove();
+
+    el = document.createElement('div');
+    el.setAttribute("id",  'sticker-box-avatar-' + event.userId);
+    el.classList.add("sticker-box-avatar");
 
     let sticker = document.createElement("img");
     sticker.style.width = '90px';
     sticker.style.height = '90px';
     sticker.style.opacity = '.9'
 
-    console.log(event.content.name)
     for(let stick of stickersList) {
         if(stick.indexOf(event.content.name) !== -1) {
             sticker.setAttribute("src",  stick);
@@ -1049,14 +1070,18 @@ function showStickerIfNecessary(event) {
 
     el.appendChild(sticker);
     if(callDivs[event.userId]) {
-        callDivs[event.userId].container.appendChild(el);
+        if(document.querySelector('#participant-item-' + event.userId)){
+            let  elp = document.querySelector('#participant-item-' + event.userId);
+            elp.appendChild(el);
+        }
         setTimeout(function () {
-            document.getElementById("sticker-box-" + event.userId).remove()
+            document.getElementById("sticker-box-avatar-" + event.userId).remove()
         }, 5000)
     }
 }
 
 let stickersContainer = document.getElementById("stickers");
+let breakLine = document.createElement("br")
 for(let sticky of stickersList){
     let element = document.createElement('img');
     element.setAttribute('src', sticky);
@@ -1066,12 +1091,25 @@ for(let sticky of stickersList){
     stickersContainer.append(element);
 }
 
+stickersContainer.append(breakLine);
+for(let sticky of textStickersList){
+    let element = document.createElement('a');
+    element.innerText = sticky;
+    element.setAttribute("class", 'text-sticker')
+    stickersContainer.append(element);
+}
+
 var sticker = document.getElementsByClassName("sticker");
 
 var sendSticker = function() {
-    var src = this.getAttribute("src");
+    if(!callId) {
+        console.warn("[call-full] Start video call to send stickers");
+        return;
+    }
 
-    let data = src.split('/')
+    let src = this.getAttribute("src")
+        , data = src.split('/');
+
     chatAgent.sendCallMetaData({
         content: {
             sender: 'callFull',
@@ -1083,4 +1121,25 @@ var sendSticker = function() {
 
 for (var i = 0; i < sticker.length; i++) {
     sticker[i].addEventListener('click', sendSticker, false);
+}
+var sendTextSticker = function() {
+    if(!callId) {
+        console.warn("[call-full] Start video call to send text stickers");
+        return;
+    }
+
+    let src = this.getAttribute("src")
+        , data = src.split('/');
+
+    chatAgent.sendCallMetaData({
+        content: {
+            sender: 'callFull',
+            eventType: 'showTextSticker',
+            name: data[data.length - 1]
+        }
+    })
+};
+
+for (var i = 0; i < sticker.length; i++) {
+    sticker[i].addEventListener('click', sendTextSticker, false);
 }

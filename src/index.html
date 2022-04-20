@@ -201,7 +201,12 @@
             display: inline-block;
         }
 
-        .sticker-box {
+        #stickers {
+            direction: rtl;
+
+        }
+
+        .sticker-box-video {
             position: absolute;
             top: 0;
             left: 0;
@@ -211,6 +216,44 @@
             align-items: center;
             justify-content: center;
             background-color: rgba(76, 100, 162, 0.38);
+        }
+
+        .sticker-box-avatar{
+            position: absolute;
+            bottom: 110%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            border-radius: 15px;
+            border: 1px solid #999;
+            width: 70px;
+            height: 70px;
+        }
+
+        .sticker-box-avatar:before{
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 1px solid #999;
+            width: 5px;
+            height: 5px;
+            left: 15px;
+        }
+
+        .text-sticker {
+            border-radius: 8px;
+            background-color: #344c62;
+            color: #ffffff;
+            display: inline-block;
+            font-size: 14px;
+            padding: 2px 6px;
+            margin: 2px;
+        }
+        .text-sticker:active, .text-sticker:focus {
+            color: #ffffff;
         }
 
     </style>
@@ -480,7 +523,7 @@
         </fieldset>
     </form>
     <div class="stats-box"></div>
-    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1401.1.28 (podchat-browser@12.5.0-snapshot.13)</p>
+    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1401.1.31 (podchat-browser@12.5.0-snapshot.13)</p>
 </div>
 
 <div id="analyser"></div>
