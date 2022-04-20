@@ -413,7 +413,6 @@ function createCallParticipantTemplate(userInfo) {
     userDiv.setAttribute("class", "participant-item");
     userDiv.style.position = 'relative';
     userDiv.style.width = '15%';
-    userDiv.style.overflow = 'hidden';
     userDiv.style.padding = '5px';
 
     var data = `<img src="${userInfo.image}" style="width: 100%; position:relative;" alt="">
@@ -1038,13 +1037,16 @@ function showTextSticker(event) {
     let sticker = document.createElement("span");
     sticker.style.opacity = '.9';
     sticker.style.color = '#fff';
+    sticker.style.fontSize = '20px';
+    sticker.style.direction = 'rtl';
     sticker.innerText = event.content.name
 
     el.appendChild(sticker);
     if(callDivs[event.userId]) {
         callDivs[event.userId].container.appendChild(el);
         setTimeout(function () {
-            document.getElementById("sticker-box-video-" + event.userId).remove()
+            el.remove();
+            //document.getElementById("sticker-box-video-" + event.userId).remove()
         }, 5000)
     }
 }
@@ -1075,7 +1077,8 @@ function showImageSticker(event) {
             elp.appendChild(el);
         }
         setTimeout(function () {
-            document.getElementById("sticker-box-avatar-" + event.userId).remove()
+            el.remove();
+            //document.getElementById("sticker-box-avatar-" + event.userId).remove()
         }, 5000)
     }
 }
