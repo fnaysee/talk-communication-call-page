@@ -3,6 +3,25 @@
 const path = require('path');
 const root = path.join(__dirname, '..');
 const merge = require('webpack-merge');
+const cfg = require("../src/scripts/config")
+const fs = require("fs");
+
+
+
+modifyIndexTemplate();
+
+function modifyIndexTemplate() {
+    var input = __dirname + '/../src/template.html'
+        , output = __dirname + '/../src/index.html'
+        , content = fs.readFileSync(input, 'utf8')
+        , envRegex = new RegExp("{{env}}", 'g')
+        , versionRegex = new RegExp("{{version}}", 'g')
+        , dateRegex = new RegExp("{{date}}", 'g')
+    content = content.replace(envRegex,  cfg.env);
+    content = content.replace(versionRegex,  cfg.version);
+    content = content.replace(dateRegex,  cfg.date);
+    fs.writeFileSync(output, content);
+}
 
 module.exports = (env) => {
     let config = {

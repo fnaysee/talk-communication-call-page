@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PodChat Call (Local)</title>
+    <title>PodChat Call ({{env}})</title>
     <meta charset="utf-8">
 <!--    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">-->
     <style>
@@ -262,7 +262,7 @@
 <body>
 <div id="container">
     <div id="header">
-        <h1>POD CHAT CALL (Local)</h1>
+        <h1>POD CHAT CALL ({{env}})</h1>
 
         <a class="btn outline" href="#" id="sign-out">
             Sign out
@@ -523,7 +523,7 @@
         </fieldset>
     </form>
     <div class="stats-box"></div>
-    <p style="text-align: center; font-size: 10px; color: #888;">Published at 1401.1.31 (podchat-browser@12.5.0-snapshot.13)</p>
+    <p style="text-align: center; font-size: 10px; color: #888;">Published at {{date}} (podchat-browser@{{version}})</p>
 </div>
 
 <div id="analyser"></div>

@@ -1,26 +1,24 @@
-import './index.html';
-
+import './index.html'
 import {auth, signOut} from "podauth";
 import Podchat from 'podchat-browser';
 
 import Config from './scripts/Config';
 
-
 const stickersList = [
-    "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sad.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/bored.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/1489408a302319a18d582196d3f52c4bc75981af/cool-beefy.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/cool.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/crazy.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/disappointed.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/happy.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/positive.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/negative.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sports.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/sunglasses-smoking.gif"
-    ,"https://raw.githubusercontent.com/fnaysee/stickers-test/master/thinking.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/tongue-out-teasing.gif"
-    , "https://raw.githubusercontent.com/fnaysee/stickers-test/master/kittens.gif"
+    "https://s6.uupload.ir/files/sad_9l0a.gif"
+    , "https://s6.uupload.ir/files/bored_9wug.gif"
+    , "https://s6.uupload.ir/files/cool-beefy_q8ta.gif"
+    , "https://s6.uupload.ir/files/cool_ghzq.gif"
+    , "https://s6.uupload.ir/files/crazy_uyo.gif"
+    , "https://s6.uupload.ir/files/disappointed_vqiq.gif"
+    , "https://s6.uupload.ir/files/happy_9dap.gif"
+    , "https://s6.uupload.ir/files/positive_fp8z.gif"
+    , "https://s6.uupload.ir/files/negative_kgkq.gif"
+    , "https://s6.uupload.ir/files/sports_q095.gif"
+    , "https://s6.uupload.ir/files/sunglasses-smoking_82m5.gif"
+    , "https://s6.uupload.ir/files/thinking_zecc.gif"
+    , "https://s6.uupload.ir/files/tongue-out-teasing_kuy2.gif"
+    , "https://s6.uupload.ir/files/kittens_atln.gif"
 ];
 const textStickersList = [
     'سلام به همه', 'درود بر شما', 'سلام عمو',
@@ -42,16 +40,14 @@ let wantsToJoinAGroupCall = false
     , callUsersListElement = document.getElementById("call-participants-list")
     , currentCallThreadId;
 
-const env = 'local';
-
 let chatAgent = new Podchat({
     appId: 'CallTest',
-    socketAddress: Config[env].socketAddress,
-    ssoHost: Config[env].ssoHost,
-    platformHost: Config[env].platformHost,
-    fileServer: Config[env].fileServer,
-    podSpaceFileServer: Config[env].podSpaceFileServer,
-    serverName: Config[env].serverName,
+    socketAddress: Config[Config.env].socketAddress,
+    ssoHost: Config[Config.env].ssoHost,
+    platformHost: Config[Config.env].platformHost,
+    fileServer: Config[Config.env].fileServer,
+    podSpaceFileServer: Config[Config.env].podSpaceFileServer,
+    serverName: Config[Config.env].serverName,
     grantDeviceIdFromSSO: false,
     enableCache: false,
     fullResponseObject: true,
@@ -96,7 +92,7 @@ auth({
     clientId: Config.CLIENT_ID,
     scope: "social:write",
     secure: window.location.href.indexOf('https') > -1,
-    redirectUri: Config[env].redirectUrl,//Config.REDIRECT_URL,//(process.env.NODE_ENV == 'production'? Config.REDIRECT_URL : Config.REDIRECT_URL_LOCAL) ,
+    redirectUri: Config[Config.env].redirectUrl,//Config.REDIRECT_URL,//(process.env.NODE_ENV == 'production'? Config.REDIRECT_URL : Config.REDIRECT_URL_LOCAL) ,
     onNewToken: token => {
         chatAgent.setToken(token);
     }
